@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   if (!session.data.session.user.app_metadata.isAdmin)
     return NextResponse.json(
       { message: `Only Admin allowed to do this action.` },
-      { status: 500 }
+      { status: 500 },
     );
 
   const data: PromoteAdminSchema = await request.json();
@@ -20,24 +20,24 @@ export async function POST(request: NextRequest) {
   if (!validate)
     return NextResponse.json(
       { message: "Error, Data validation failed." },
-      { status: 500 }
+      { status: 500 },
     );
 
   const { data: userResponse } = await client.auth.admin.getUserById(
-    data.userId
+    data.userId,
   );
 
   if (!userResponse.user)
     return NextResponse.json(
       { message: `Error, UserId: ${data.userId} not found.` },
-      { status: 500 }
+      { status: 500 },
     );
 
   console.log("userResponse", userResponse.user);
 
   const { data: updatedUser, error } = await client.auth.admin.updateUserById(
     data.userId,
-    { app_metadata: { isAdmin: true } }
+    { app_metadata: { isAdmin: true } },
   );
 
   if (error)
@@ -47,6 +47,6 @@ export async function POST(request: NextRequest) {
     {
       message: `User:${updatedUser.user.user_metadata.name} is promoted to Admin.`,
     },
-    { status: 201 }
+    { status: 201 },
   );
 }
