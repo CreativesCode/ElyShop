@@ -17,7 +17,7 @@ const GuestCart = () => {
 
   const productCountStorage = useMemo(
     () => calcProductCountStorage(cart),
-    [cart]
+    [cart],
   );
   return <CartLink productCount={productCountStorage} />;
 };
@@ -34,7 +34,7 @@ const UserCartNav = ({ currentUser }: { currentUser: User }) => {
 
   const productCount = useMemo(
     () => (carts?.edges || []).reduce((acc, cur) => acc + cur.node.quantity, 0),
-    [carts.edges]
+    [carts.edges],
   );
 
   return (

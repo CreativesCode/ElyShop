@@ -43,12 +43,12 @@ function UserNav() {
                 <AvatarImage
                   src="/avatars/01.png"
                   alt={getNameInitials(
-                    (user.user_metadata.name as string) ?? "Name"
+                    (user.user_metadata.name as string) ?? "Name",
                   )}
                 />
                 <AvatarFallback className="text-accent border border-primary bg-primary-200">
                   {getNameInitials(
-                    (user.user_metadata.name as string) ?? "Name"
+                    (user.user_metadata.name as string) ?? "Name",
                   )}
                 </AvatarFallback>
               </Avatar>

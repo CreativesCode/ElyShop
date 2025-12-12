@@ -13,7 +13,7 @@ function CartLink({ productCount }: CartLinkProps) {
         <Badge
           className={cn(
             "absolute block rounded-full w-4 h-4 p-0 -top-2 -right-2 text-[10px] text-center align-middle transition-all duration-200",
-            productCount === 0 ? "scale-0" : "scale-100"
+            productCount === 0 ? "scale-0" : "scale-100",
           )}
         >
           {productCount}

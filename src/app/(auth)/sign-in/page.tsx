@@ -16,7 +16,7 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = getPageMetadata(
   "Sign In",
-  `Sign in to ${siteConfig.name}`
+  `Sign in to ${siteConfig.name}`,
 );
 
 export default function SignInPage() {

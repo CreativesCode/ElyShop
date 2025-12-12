@@ -24,7 +24,7 @@ const inputVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 // const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -60,7 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       //   {...props}
       // />
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

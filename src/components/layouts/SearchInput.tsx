@@ -46,7 +46,7 @@ function SearchInput() {
         <Icons.search
           className={cn(
             isFocused ? "scale-0" : "scale-100",
-            "absolute left-8 top-6 h-6 w-4 text-muted-foreground transition-all duration-500"
+            "absolute left-8 top-6 h-6 w-4 text-muted-foreground transition-all duration-500",
           )}
         />
 
@@ -61,7 +61,7 @@ function SearchInput() {
                   placeholder="Find your Favour Furniture and Bring them to Home"
                   className={cn(
                     isFocused ? "pl-6" : "pl-10",
-                    "rounded-full transition-all duration-500"
+                    "rounded-full transition-all duration-500",
                   )}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
@@ -75,7 +75,7 @@ function SearchInput() {
           <Icons.search
             className={cn(
               "h-4 w-4 text-muted-foreground transition-all duration-200",
-              isFocused ? "opacity-1 scale-1" : "opacity-0 scale-0"
+              isFocused ? "opacity-1 scale-1" : "opacity-0 scale-0",
             )}
           />
         </Button>

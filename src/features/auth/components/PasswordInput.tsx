@@ -18,7 +18,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           className={cn(
             "w-full h-10 pl-10 pr-10 py-2 text-sm rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 placeholder:text-muted-foreground",
-            className
+            className,
           )}
           type={showPassword ? "text" : "password"}
         />
@@ -47,7 +47,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
         </Button>
       </div>
     );
-  }
+  },
 );
 PasswordInput.displayName = "PasswordInput";
 
