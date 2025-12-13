@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { Home, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
 export const CollectionColumnsFragment = gql(/* GraphQL */ `
@@ -21,6 +21,7 @@ export const CollectionColumnsFragment = gql(/* GraphQL */ `
     description
     slug
     parent_id
+    show_in_home
     collections {
       id
       label
@@ -41,9 +42,17 @@ const CollectionsColumns: ColumnDef<{
       return (
         <Link
           href={`/admin/collections/${collection.id}`}
-          className="text-center font-medium capitalize px-3 hover:underline"
+          className="text-center font-medium capitalize px-3 hover:underline flex items-center gap-2"
         >
           {collection.label}
+          {collection.show_in_home && (
+            <span
+              className="inline-flex items-center"
+              aria-label="Visible en el home"
+            >
+              <Home className="h-4 w-4 text-primary" />
+            </span>
+          )}
         </Link>
       );
     },
@@ -126,8 +135,8 @@ const CollectionsColumns: ColumnDef<{
   },
 ];
 
-const DeleteCollectionDialog = ({ collectionId }: { collectionId: string }) => {
-  const onClickHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+const DeleteCollectionDialog = () => {
+  const onClickHandler = async () => {
     // await deleteCategoryAction(categoryId)
   };
   return (

@@ -907,6 +907,7 @@ export type Collections = Node & {
   order?: Maybe<Scalars["Int"]>;
   parent_id?: Maybe<Scalars["String"]>;
   productsCollection?: Maybe<ProductsConnection>;
+  show_in_home?: Maybe<Scalars["Boolean"]>;
   slug: Scalars["String"];
   title: Scalars["String"];
 };
@@ -965,6 +966,7 @@ export type CollectionsFilter = {
   or?: InputMaybe<Array<CollectionsFilter>>;
   order?: InputMaybe<IntFilter>;
   parent_id?: InputMaybe<StringFilter>;
+  show_in_home?: InputMaybe<BooleanFilter>;
   slug?: InputMaybe<StringFilter>;
   title?: InputMaybe<StringFilter>;
 };
@@ -976,6 +978,7 @@ export type CollectionsInsertInput = {
   label?: InputMaybe<Scalars["String"]>;
   order?: InputMaybe<Scalars["Int"]>;
   parent_id?: InputMaybe<Scalars["String"]>;
+  show_in_home?: InputMaybe<Scalars["Boolean"]>;
   slug?: InputMaybe<Scalars["String"]>;
   title?: InputMaybe<Scalars["String"]>;
 };
@@ -995,6 +998,7 @@ export type CollectionsOrderBy = {
   label?: InputMaybe<OrderByDirection>;
   order?: InputMaybe<OrderByDirection>;
   parent_id?: InputMaybe<OrderByDirection>;
+  show_in_home?: InputMaybe<OrderByDirection>;
   slug?: InputMaybe<OrderByDirection>;
   title?: InputMaybe<OrderByDirection>;
 };
@@ -1006,6 +1010,7 @@ export type CollectionsUpdateInput = {
   label?: InputMaybe<Scalars["String"]>;
   order?: InputMaybe<Scalars["Int"]>;
   parent_id?: InputMaybe<Scalars["String"]>;
+  show_in_home?: InputMaybe<Scalars["Boolean"]>;
   slug?: InputMaybe<Scalars["String"]>;
   title?: InputMaybe<Scalars["String"]>;
 };
@@ -1938,6 +1943,7 @@ export type Update_Collection_Page_QueryQuery = {
         title: string;
         featured_image_id: string;
         parent_id?: string | null;
+        show_in_home?: boolean | null;
       };
     }>;
   } | null;
@@ -1961,6 +1967,7 @@ export type AdminCollectionsPageQueryQuery = {
         description: string;
         slug: string;
         parent_id?: string | null;
+        show_in_home?: boolean | null;
         collections?: {
           __typename?: "collections";
           id: string;
@@ -2543,6 +2550,7 @@ export type CollectionColumnsFragmentFragment = {
   description: string;
   slug: string;
   parent_id?: string | null;
+  show_in_home?: boolean | null;
   collections?: {
     __typename?: "collections";
     id: string;
@@ -2560,6 +2568,7 @@ export type CollectionFromFragmentFragment = {
   title: string;
   featured_image_id: string;
   parent_id?: string | null;
+  show_in_home?: boolean | null;
 };
 
 export type CollectionsQueryQueryVariables = Exact<{ [key: string]: never }>;
@@ -2583,6 +2592,7 @@ export type UpdateCollectionMutationMutationVariables = Exact<{
   title?: InputMaybe<Scalars["String"]>;
   featuredImageId?: InputMaybe<Scalars["String"]>;
   parentId?: InputMaybe<Scalars["String"]>;
+  showInHome?: InputMaybe<Scalars["Boolean"]>;
 }>;
 
 export type UpdateCollectionMutationMutation = {
@@ -2602,6 +2612,7 @@ export type CreateCollectionMutationMutationVariables = Exact<{
   title?: InputMaybe<Scalars["String"]>;
   featuredImageId?: InputMaybe<Scalars["String"]>;
   parentId?: InputMaybe<Scalars["String"]>;
+  showInHome?: InputMaybe<Scalars["Boolean"]>;
 }>;
 
 export type CreateCollectionMutationMutation = {
@@ -3068,6 +3079,7 @@ export const CollectionColumnsFragmentFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "description" } },
           { kind: "Field", name: { kind: "Name", value: "slug" } },
           { kind: "Field", name: { kind: "Name", value: "parent_id" } },
+          { kind: "Field", name: { kind: "Name", value: "show_in_home" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "collections" },
@@ -3105,6 +3117,7 @@ export const CollectionFromFragmentFragmentDoc = {
           { kind: "Field", name: { kind: "Name", value: "title" } },
           { kind: "Field", name: { kind: "Name", value: "featured_image_id" } },
           { kind: "Field", name: { kind: "Name", value: "parent_id" } },
+          { kind: "Field", name: { kind: "Name", value: "show_in_home" } },
         ],
       },
     },
@@ -3768,6 +3781,7 @@ export const Update_Collection_Page_QueryDocument = {
           { kind: "Field", name: { kind: "Name", value: "title" } },
           { kind: "Field", name: { kind: "Name", value: "featured_image_id" } },
           { kind: "Field", name: { kind: "Name", value: "parent_id" } },
+          { kind: "Field", name: { kind: "Name", value: "show_in_home" } },
         ],
       },
     },
@@ -3868,6 +3882,7 @@ export const AdminCollectionsPageQueryDocument = {
           { kind: "Field", name: { kind: "Name", value: "description" } },
           { kind: "Field", name: { kind: "Name", value: "slug" } },
           { kind: "Field", name: { kind: "Name", value: "parent_id" } },
+          { kind: "Field", name: { kind: "Name", value: "show_in_home" } },
           {
             kind: "Field",
             name: { kind: "Name", value: "collections" },
@@ -4992,6 +5007,29 @@ export const LandingRouteQueryDocument = {
             alias: { kind: "Name", value: "collectionScrollCards" },
             name: { kind: "Name", value: "collectionsCollection" },
             arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "filter" },
+                value: {
+                  kind: "ObjectValue",
+                  fields: [
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "show_in_home" },
+                      value: {
+                        kind: "ObjectValue",
+                        fields: [
+                          {
+                            kind: "ObjectField",
+                            name: { kind: "Name", value: "eq" },
+                            value: { kind: "BooleanValue", value: true },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
               {
                 kind: "Argument",
                 name: { kind: "Name", value: "first" },
@@ -6575,6 +6613,14 @@ export const UpdateCollectionMutationDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "showInHome" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -6661,6 +6707,14 @@ export const UpdateCollectionMutationDocument = {
                       value: {
                         kind: "Variable",
                         name: { kind: "Name", value: "parentId" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "show_in_home" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "showInHome" },
                       },
                     },
                   ],
@@ -6760,6 +6814,14 @@ export const CreateCollectionMutationDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "showInHome" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -6828,6 +6890,14 @@ export const CreateCollectionMutationDocument = {
                       value: {
                         kind: "Variable",
                         name: { kind: "Name", value: "parentId" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "show_in_home" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "showInHome" },
                       },
                     },
                   ],

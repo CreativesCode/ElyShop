@@ -1151,6 +1151,7 @@ type collections implements Node {
   order: Int
   featured_image_id: String!
   parent_id: String
+  show_in_home: Boolean
   medias: medias
   collections: collections
   productsCollection(
@@ -1230,6 +1231,7 @@ input collectionsFilter {
   order: IntFilter
   featured_image_id: StringFilter
   parent_id: StringFilter
+  show_in_home: BooleanFilter
   nodeId: IDFilter
 
   """
@@ -1255,6 +1257,7 @@ input collectionsInsertInput {
   order: Int
   featured_image_id: String
   parent_id: String
+  show_in_home: Boolean
 }
 
 type collectionsInsertResponse {
@@ -1274,6 +1277,7 @@ input collectionsOrderBy {
   order: OrderByDirection
   featured_image_id: OrderByDirection
   parent_id: OrderByDirection
+  show_in_home: OrderByDirection
 }
 
 input collectionsUpdateInput {
@@ -1285,6 +1289,7 @@ input collectionsUpdateInput {
   order: Int
   featured_image_id: String
   parent_id: String
+  show_in_home: Boolean
 }
 
 type collectionsUpdateResponse {

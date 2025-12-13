@@ -393,6 +393,7 @@ export const collections = pgTable(
     parentId: text("parent_id").references((): any => collections.id, {
       onDelete: "set null",
     }),
+    showInHome: boolean("show_in_home").default(false),
   },
   (table) => {
     return {

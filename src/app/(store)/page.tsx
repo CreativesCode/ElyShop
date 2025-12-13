@@ -49,6 +49,7 @@ const LandingRouteQuery = gql(/* GraphQL */ `
     }
 
     collectionScrollCards: collectionsCollection(
+      filter: { show_in_home: { eq: true } }
       first: 6
       orderBy: [{ order: DescNullsLast }]
     ) {
@@ -81,16 +82,37 @@ export default async function Home() {
             collections={data.collectionScrollCards.edges}
           />
         ) : null}
-
-        {data.products && data.products.edges ? (
+        {/* {data.products && data.products.edges ? (
           <FeaturedProductsCards products={data.products.edges} />
-        ) : null}
+        ) : null} */}
+        {/* <CollectionGrid /> */}
 
-        <CollectionGrid />
+        <BannerCollectionCard
+          imageSrc="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/banner-swimwear.jpg"
+          title="Menos es Más. Verano."
+          description="Creemos que el estilo de playa no debe ser complicado. Diseños atemporales, tejidos sostenibles y cortes que realzan tu belleza natural, hechos para durar más allá de una temporada."
+          ctatext="Ver Colección Playa"
+          collectionHref="/collections/swimwear"
+          imageLeft={true}
+        />
 
+        <BannerCollectionCard
+          imageSrc="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/banner-cupboard.jpg"
+          title="Menos es Más. Esenciales."
+          description="Simplifica tu día a día con nuestro armario cápsula. Prendas versátiles de alta calidad que combinan entre sí sin esfuerzo, permitiéndote vestirte con elegancia y consciencia en minutos."
+          ctatext="Explorar Ropa"
+          collectionHref="/collections/cupboard"
+          imageLeft={false}
+        />
         <DifferentFeatureCards />
-
-        <LessIsMoreCard />
+        <BannerCollectionCard
+          imageSrc="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/banner-skin-care.jpg"
+          title="Menos es Más. Piel."
+          description="Creemos en una belleza honesta. Fórmulas botánicas y eficaces con pocos ingredientes, sin tóxicos, para devolverle a tu piel su equilibrio natural y resplandor."
+          ctatext="Cuidar mi Piel"
+          collectionHref="/collections/cupboard"
+          imageLeft={true}
+        />
       </Shell>
     </main>
   );
@@ -163,7 +185,7 @@ interface CollectionsCardsProps {
 
 function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
   return (
-    <section className="flex justify-start items-center gap-x-10 overflow-auto py-12">
+    <section className="flex justify-center items-center gap-x-10 overflow-auto py-12">
       {collections.map(({ node }) => (
         <Link
           href={`/collections/${node.slug}`}
@@ -171,8 +193,8 @@ function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
         >
           <div
             className={cn(
-              "relative bg-secondary rounded-full flex justify-center items-center",
-              "w-[280px] h-[280px]",
+              "relative bg-secondary rounded-full flex justify-center items-center overflow-hidden shadow-md",
+              "w-[240px] h-[240px]",
               // "md:w-[320px] md:h-[320px]"
               // "lg:w-[360px] lg:h-[360px]"
             )}
@@ -183,7 +205,7 @@ function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
               width={320}
               height={320}
               className={cn(
-                "object-center object-cover hover:scale-105 transition-all duration-500",
+                "object-center object-cover hover:scale-105 transition-all duration-500 rounded-full",
                 "w-[240px] h-[240px]",
                 // "md:w-[280px] md:h-[280px]",
                 // "lg:w-[320px] lg:h-[320px]"
@@ -231,79 +253,31 @@ function FeaturedProductsCards({ products }: FeaturedProductsCardsProps) {
   );
 }
 
-function CollectionGrid() {
-  return (
-    <section className="relative lg:space-x-5 space-y-5 lg:space-y-0 grid grid-cols-1 lg:grid-cols-3 max-h-[840px]">
-      <div className="relative col-span-2 w-full h-[840px]">
-        <Image
-          src={keytoUrl("public/zPiCx79oGe5X4rVBLg0Ss.jpeg")}
-          width={1080}
-          height={1080}
-          className="object-cover w-full h-full"
-          alt="1"
-        />
-        <div className="bg-zinc-800/20 flex justify-center items-center flex-col absolute w-full h-full top-0 left-0 text-white">
-          <p className="text-5xl mb-3">Bath Room</p>
-          <p className=" font-light mb-8">Designed for enhanchment</p>
-          <Link
-            className={cn(buttonVariants({ size: "lg" }), "text-xl py-8 px-10")}
-            href={"/collections/bathroom"}
-          >
-            DiscoverNow
-          </Link>
-        </div>
-      </div>
-
-      <div className="flex flex-col w-full space-y-5 h-[840px]">
-        <div className="relative w-full h-[340px]">
-          <Image
-            src={keytoUrl("public/E2MWE99uGyOZLd76UEixy.jpeg")}
-            width={800}
-            height={900}
-            className="object-cover w-full h-full"
-            alt="1"
-          />
-        </div>
-
-        <div className="relative overflow-hidden">
-          <Image
-            src={keytoUrl("public/YPO3VwJvjvlkWzNtIv9FS.jpeg")}
-            width={800}
-            height={900}
-            className="object-cover w-full h-full"
-            alt="1"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function DifferentFeatureCards() {
   const features = [
     {
       Icon: Icons.cart,
-      title: "Responsible Design",
+      title: "Compra fácil y rápida",
       description:
-        "Designed with integrity and durably crafted for everyday use.",
+        "Navega, elige y paga en minutos. Te acompañamos en todo el proceso por WhatsApp si lo necesitas.",
     },
     {
       Icon: Icons.tag,
-      title: "Transparent Pricing",
+      title: "Productos de calidad",
       description:
-        "We believe in accessible pricing and full transparency. Our pricing model is an open book.",
+        "Seleccionamos artículos con buena relación calidad/precio y revisamos cada pedido antes de entregarlo.",
     },
     {
       Icon: Icons.package,
-      title: "Sustainable Sourcing",
+      title: "Envío a domicilio",
       description:
-        "We only partner with people who put the earth, and its people, first.",
+        "Entregamos a domicilio en Santa Clara, Placetas y Calabazal de Sagua. También coordinamos puntos de entrega según tu ubicación.",
     },
     {
       Icon: Icons.award,
-      title: "Giving Back",
+      title: "Compras por encargo",
       description:
-        "Thanks to Mealshare, every purchase directly donates a meal to a youth in need.",
+        "Hacemos compras por encargo en Shein, Temu y Amazon. Tú nos mandas el link y te cotizamos rápido con fecha estimada.",
     },
   ];
   return (
@@ -317,11 +291,11 @@ function DifferentFeatureCards() {
             <Icon
               width={45}
               height={45}
-              className="mb-5 text-zinc-400 font-light"
+              className="mb-5 text-accent font-light"
             />
           </div>
 
-          <h4 className="text-xl font-serif font-extralight mb-3">{title}</h4>
+          <h4 className="text-xl font-semibold mb-3 text-primary">{title}</h4>
           <p className="text-lg text-muted-foreground">{description}</p>
         </div>
       ))}
@@ -329,34 +303,54 @@ function DifferentFeatureCards() {
   );
 }
 
-function LessIsMoreCard() {
+interface BannerCollectionCardProps {
+  imageSrc: string;
+  title: string;
+  description: string;
+  ctatext: string;
+  collectionHref: string;
+  imageLeft: boolean;
+}
+
+function BannerCollectionCard({
+  imageSrc,
+  title,
+  description,
+  ctatext,
+  collectionHref,
+  imageLeft,
+}: BannerCollectionCardProps) {
   return (
     <section className="max-w-[1920px] mx-auto h-[620px] md:h-[580px] bg-[#FFF8EE] grid grid-cols-12 my-16">
-      <div className="relative w-full h-[340px] md:h-[580px] col-span-12 md:col-span-8 overflow-hidden">
+      <div
+        className={cn(
+          "relative w-full h-[340px] md:h-[580px] col-span-12 md:col-span-8 overflow-hidden",
+          imageLeft ? "md:order-1" : "md:order-2",
+        )}
+      >
         <Image
-          src={"/assets/cutingcardImage.jpg"}
+          src={imageSrc}
           alt=""
           fill
           className="object-cover object-center"
         />
       </div>
 
-      <div className="col-span-12 md:col-span-4 pb-6 md:py-20 px-6 md:px-16">
-        <h2 className="text-xl md:text-3xl font-semibold mb-3">
-          Less is More. Minimal.
-        </h2>
+      <div
+        className={cn(
+          "col-span-12 md:col-span-4 pb-6 md:py-20 px-6 md:px-16",
+          imageLeft ? "md:order-2" : "md:order-1",
+        )}
+      >
+        <h2 className="text-xl md:text-3xl font-semibold mb-3">{title}</h2>
         <p className="text-xs leading-[1.5] md:text-lg tracking-tight mb-5 md:mb-12 text-left max-w-md">
-          We believe no one should have to choose between the quality they want,
-          and the price they can afford. That’s why we make sure our products
-          stand up to only the highest quality and sustainability standards -
-          and produce them in a way that keeps great design affordable for
-          everyone.
+          {description}
         </p>
         <Link
-          href="/shop"
+          href={collectionHref}
           className={cn(buttonVariants(), "rounded-full text-xs md:text-md")}
         >
-          Shop now
+          {ctatext}
         </Link>
       </div>
     </section>

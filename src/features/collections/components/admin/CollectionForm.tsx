@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
 import { InsertCollection, collections } from "@/lib/supabase/schema";
@@ -50,6 +51,7 @@ const CollectionFromFragment = gql(/* GraphQL */ `
     title
     featured_image_id
     parent_id
+    show_in_home
   }
 `);
 
@@ -153,6 +155,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
       ...collection,
       featuredImageId: collection ? collection.featured_image_id : undefined,
       parentId: collection?.parent_id || undefined,
+      showInHome: collection?.show_in_home || false,
     },
   });
 
@@ -164,6 +167,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
       const mutationData = {
         ...data,
         parentId: data.parentId || null,
+        showInHome: data.showInHome || false,
       };
 
       if (collection) {
@@ -300,6 +304,28 @@ function CollectionForm({ collection }: CollectionFormProps) {
                   Leave as &quot;None&quot; for root-level collections.
                 </FormDescription>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="showInHome"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value || false}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Mostrar en el Home</FormLabel>
+                  <FormDescription>
+                    Marca esta opción si quieres que esta categoría aparezca en
+                    el listado de categorías del home.
+                  </FormDescription>
+                </div>
               </FormItem>
             )}
           />

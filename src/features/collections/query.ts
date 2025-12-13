@@ -9,6 +9,7 @@ export const UpdateCollectionMutation = gql(/* GraphQL */ `
     $title: String
     $featuredImageId: String
     $parentId: String
+    $showInHome: Boolean
   ) {
     updatecollectionsCollection(
       filter: { id: { eq: $id } }
@@ -19,6 +20,7 @@ export const UpdateCollectionMutation = gql(/* GraphQL */ `
         description: $description
         title: $title
         parent_id: $parentId
+        show_in_home: $showInHome
       }
     ) {
       affectedCount
@@ -39,6 +41,7 @@ export const CreateCollectionMutation = gql(/* GraphQL */ `
     $title: String
     $featuredImageId: String
     $parentId: String
+    $showInHome: Boolean
   ) {
     insertIntocollectionsCollection(
       objects: {
@@ -49,6 +52,7 @@ export const CreateCollectionMutation = gql(/* GraphQL */ `
         description: $description
         title: $title
         parent_id: $parentId
+        show_in_home: $showInHome
       }
     ) {
       affectedCount

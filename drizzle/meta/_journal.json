@@ -8,6 +8,13 @@
       "when": 1763351388604,
       "tag": "0000_large_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1765622760965,
+      "tag": "0001_icy_stellaris",
+      "breakpoints": true
     }
   ]
 }
