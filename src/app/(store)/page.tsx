@@ -76,7 +76,7 @@ export default async function Home() {
     <main>
       <HeroSection />
 
-      <Shell>
+      <Shell className="max-w-screen-2xl mx-auto">
         {data.products && data.products.edges ? (
           <ProductSubCollectionsCircles
             collections={data.collectionScrollCards.edges}
@@ -134,7 +134,7 @@ function HeroSection() {
       </div>
 
       <div className="container absolute py-8 h-screen md:h-[800px] w-full">
-        <div className="flex flex-col justify-center z-30 h-full">
+        <div className="flex flex-col justify-center z-30 h-full max-w-screen-2xl mx-auto">
           <p className="text-sm md:text-md uppercase tracking-widest text-white ">
             hugolam
           </p>

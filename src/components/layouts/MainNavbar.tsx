@@ -18,7 +18,9 @@ async function MainNavbar({ adminLayout = false }: MainNavbarProps) {
     <nav className="bg-primary-50 border-b border-primary-300 fixed z-50 w-full">
       <div
         className={cn(
-          adminLayout ? "mx-auto px-[3rem] max-w-[2500px] py-3" : "container",
+          adminLayout
+            ? "mx-auto px-[3rem] max-w-[2500px] py-3"
+            : "max-w-screen-2xl mx-auto",
         )}
       >
         <div className="hidden md:flex gap-x-8 justify-between items-center">

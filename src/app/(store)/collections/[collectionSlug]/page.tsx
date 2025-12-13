@@ -83,7 +83,7 @@ async function CategoryPage({ params }: CategoryPageProps) {
 
   const collection = data.collectionsCollection.edges[0].node;
   return (
-    <Shell>
+    <Shell className="max-w-screen-2xl mx-auto">
       <CollectionBanner
         collectionBannerData={data.collectionsCollection.edges[0].node}
       />

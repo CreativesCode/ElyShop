@@ -1,10 +1,4 @@
 "use client";
-import { useMemo, useState } from "react";
-import { DocumentType, gql } from "@/gql";
-import { expectedErrorsHandler } from "@/lib/urql";
-import { User } from "@supabase/supabase-js";
-import { useMutation, useQuery } from "@urql/next";
-import { notFound } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -16,10 +10,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import CartItemCard from "@/features/carts/components/CartItemCard";
-import CheckoutButton from "./CheckoutButton";
 import EmptyCart from "@/features/carts/components/EmptyCart";
+import { DocumentType, gql } from "@/gql";
+import { expectedErrorsHandler } from "@/lib/urql";
+import { User } from "@supabase/supabase-js";
+import { useMutation, useQuery } from "@urql/next";
+import { notFound } from "next/navigation";
+import { useMemo, useState } from "react";
 import { RemoveCartsMutation, updateCartsMutation } from "../query";
 import { CartItems } from "../useCartStore";
+import CheckoutButton from "./CheckoutButton";
 
 export const FetchCartQuery = gql(/* GraphQL */ `
   query FetchCartQuery($userId: UUID, $first: Int, $after: Cursor) {
@@ -61,7 +61,21 @@ function UserCartSection({ user }: UserCartSectionProps) {
   const [, removeCart] = useMutation(RemoveCartsMutation);
 
   const cart = data && data.cartsCollection ? data.cartsCollection.edges : [];
-  const subtotal = useMemo(() => calcSubtotal(cart), [cart]);
+  const cartWithProducts = useMemo(
+    () =>
+      cart.filter(
+        (
+          item,
+        ): item is typeof item & {
+          node: { product: NonNullable<typeof item.node.product> };
+        } => item.node.product != null,
+      ),
+    [cart],
+  );
+  const subtotal = useMemo(
+    () => calcSubtotal(cartWithProducts),
+    [cartWithProducts],
+  );
   const productCount = useMemo(() => calcProductCount(cart), [cart]);
 
   if (fetching) {
@@ -141,9 +155,11 @@ function UserCartSection({ user }: UserCartSectionProps) {
   ): CartItems => {
     const cart: CartItems = {};
     data.cartsCollection.edges.forEach((item) => {
-      cart[item.node.product.id] = {
-        quantity: item.node.quantity,
-      };
+      if (item.node.product) {
+        cart[item.node.product.id] = {
+          quantity: item.node.quantity,
+        };
+      }
     });
     return cart;
   };
@@ -156,22 +172,24 @@ function UserCartSection({ user }: UserCartSectionProps) {
           className="grid grid-cols-12 gap-x-6 gap-y-5"
         >
           <div className="col-span-12 md:col-span-9 max-h-[420px] overflow-y-auto">
-            {data.cartsCollection?.edges.map(({ node }) => (
-              <CartItemCard
-                key={node.product_id}
-                id={node.product_id}
-                product={node.product}
-                quantity={node.quantity}
-                addOneHandler={() =>
-                  addOneHandler(node.product_id, node.quantity)
-                }
-                minusOneHandler={() =>
-                  minusOneHandler(node.product_id, node.quantity)
-                }
-                removeHandler={() => removeHandler(node.product_id)}
-                disabled={isLoading}
-              />
-            ))}
+            {data.cartsCollection?.edges
+              .filter(({ node }) => node.product != null)
+              .map(({ node }) => (
+                <CartItemCard
+                  key={node.product_id}
+                  id={node.product_id}
+                  product={node.product!}
+                  quantity={node.quantity}
+                  addOneHandler={() =>
+                    addOneHandler(node.product_id, node.quantity)
+                  }
+                  minusOneHandler={() =>
+                    minusOneHandler(node.product_id, node.quantity)
+                  }
+                  removeHandler={() => removeHandler(node.product_id)}
+                  disabled={isLoading}
+                />
+              ))}
           </div>
 
           <Card className="w-full h-[180px] px-3 col-span-12 md:col-span-3">
@@ -238,10 +256,11 @@ export const calcProductCount = (data: { node: { quantity: number } }[]) => {
 };
 
 const calcSubtotal = (
-  data: { node: { quantity: number; product: { price: number } } }[],
+  data: { node: { quantity: number; product?: { price: number | any } } }[],
 ) => {
   return data.reduce(
-    (acc, cur) => acc + cur.node.quantity * cur.node.product.price,
+    (acc, cur) =>
+      acc + cur.node.quantity * (Number(cur.node.product?.price) || 0),
     0,
   );
 };
