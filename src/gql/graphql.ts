@@ -813,12 +813,15 @@ export type AddressUpdateResponse = {
 
 export type Carts = Node & {
   __typename?: "carts";
+  color?: Maybe<Scalars["String"]>;
   created_at: Scalars["Datetime"];
+  material?: Maybe<Scalars["String"]>;
   /** Globally Unique Record Identifier */
   nodeId: Scalars["ID"];
   product_id: Scalars["String"];
   products?: Maybe<Products>;
   quantity: Scalars["Int"];
+  size?: Maybe<Scalars["String"]>;
   user_id: Scalars["UUID"];
 };
 
@@ -845,7 +848,9 @@ export type CartsEdge = {
 export type CartsFilter = {
   /** Returns true only if all its inner filters are true, otherwise returns false */
   and?: InputMaybe<Array<CartsFilter>>;
+  color?: InputMaybe<StringFilter>;
   created_at?: InputMaybe<DatetimeFilter>;
+  material?: InputMaybe<StringFilter>;
   nodeId?: InputMaybe<IdFilter>;
   /** Negates a filter */
   not?: InputMaybe<CartsFilter>;
@@ -853,13 +858,17 @@ export type CartsFilter = {
   or?: InputMaybe<Array<CartsFilter>>;
   product_id?: InputMaybe<StringFilter>;
   quantity?: InputMaybe<IntFilter>;
+  size?: InputMaybe<StringFilter>;
   user_id?: InputMaybe<UuidFilter>;
 };
 
 export type CartsInsertInput = {
+  color?: InputMaybe<Scalars["String"]>;
   created_at?: InputMaybe<Scalars["Datetime"]>;
+  material?: InputMaybe<Scalars["String"]>;
   product_id?: InputMaybe<Scalars["String"]>;
   quantity?: InputMaybe<Scalars["Int"]>;
+  size?: InputMaybe<Scalars["String"]>;
   user_id?: InputMaybe<Scalars["UUID"]>;
 };
 
@@ -872,16 +881,22 @@ export type CartsInsertResponse = {
 };
 
 export type CartsOrderBy = {
+  color?: InputMaybe<OrderByDirection>;
   created_at?: InputMaybe<OrderByDirection>;
+  material?: InputMaybe<OrderByDirection>;
   product_id?: InputMaybe<OrderByDirection>;
   quantity?: InputMaybe<OrderByDirection>;
+  size?: InputMaybe<OrderByDirection>;
   user_id?: InputMaybe<OrderByDirection>;
 };
 
 export type CartsUpdateInput = {
+  color?: InputMaybe<Scalars["String"]>;
   created_at?: InputMaybe<Scalars["Datetime"]>;
+  material?: InputMaybe<Scalars["String"]>;
   product_id?: InputMaybe<Scalars["String"]>;
   quantity?: InputMaybe<Scalars["Int"]>;
+  size?: InputMaybe<Scalars["String"]>;
   user_id?: InputMaybe<Scalars["UUID"]>;
 };
 
@@ -2601,6 +2616,9 @@ export type FetchCartQueryQuery = {
         product_id: string;
         user_id: any;
         quantity: number;
+        color?: string | null;
+        size?: string | null;
+        material?: string | null;
         product?: {
           __typename?: "products";
           id: string;
@@ -2624,6 +2642,9 @@ export type CreateCartMutationMutationVariables = Exact<{
   productId?: InputMaybe<Scalars["String"]>;
   userId?: InputMaybe<Scalars["UUID"]>;
   quantity?: InputMaybe<Scalars["Int"]>;
+  color?: InputMaybe<Scalars["String"]>;
+  size?: InputMaybe<Scalars["String"]>;
+  material?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type CreateCartMutationMutation = {
@@ -2636,6 +2657,9 @@ export type CreateCartMutationMutation = {
       product_id: string;
       user_id: any;
       quantity: number;
+      color?: string | null;
+      size?: string | null;
+      material?: string | null;
       product?: {
         __typename?: "products";
         id: string;
@@ -2671,6 +2695,9 @@ export type UpdateCartsMutationMutationVariables = Exact<{
   userId?: InputMaybe<Scalars["UUID"]>;
   productId?: InputMaybe<Scalars["String"]>;
   newQuantity?: InputMaybe<Scalars["Int"]>;
+  color?: InputMaybe<Scalars["String"]>;
+  size?: InputMaybe<Scalars["String"]>;
+  material?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateCartsMutationMutation = {
@@ -2684,6 +2711,9 @@ export type UpdateCartsMutationMutation = {
       product_id: string;
       user_id: any;
       quantity: number;
+      color?: string | null;
+      size?: string | null;
+      material?: string | null;
       product?: {
         __typename?: "products";
         id: string;
@@ -7029,6 +7059,18 @@ export const FetchCartQueryDocument = {
                             },
                             {
                               kind: "Field",
+                              name: { kind: "Name", value: "color" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "size" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "material" },
+                            },
+                            {
+                              kind: "Field",
                               alias: { kind: "Name", value: "product" },
                               name: { kind: "Name", value: "products" },
                               selectionSet: {
@@ -7121,6 +7163,27 @@ export const CreateCartMutationDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "color" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "material" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -7159,6 +7222,30 @@ export const CreateCartMutationDocument = {
                         name: { kind: "Name", value: "quantity" },
                       },
                     },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "color" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "color" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "size" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "size" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "material" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "material" },
+                      },
+                    },
                   ],
                 },
               },
@@ -7191,6 +7278,12 @@ export const CreateCartMutationDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "quantity" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "color" } },
+                      { kind: "Field", name: { kind: "Name", value: "size" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "material" },
                       },
                       {
                         kind: "Field",
@@ -7389,6 +7482,27 @@ export const UpdateCartsMutationDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "color" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "size" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "material" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -7454,6 +7568,30 @@ export const UpdateCartsMutationDocument = {
                         name: { kind: "Name", value: "newQuantity" },
                       },
                     },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "color" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "color" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "size" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "size" },
+                      },
+                    },
+                    {
+                      kind: "ObjectField",
+                      name: { kind: "Name", value: "material" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "material" },
+                      },
+                    },
                   ],
                 },
               },
@@ -7490,6 +7628,12 @@ export const UpdateCartsMutationDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "quantity" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "color" } },
+                      { kind: "Field", name: { kind: "Name", value: "size" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "material" },
                       },
                       {
                         kind: "Field",

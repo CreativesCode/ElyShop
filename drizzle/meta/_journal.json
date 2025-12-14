@@ -29,6 +29,27 @@
       "when": 1765679128590,
       "tag": "0003_premium_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1765719464038,
+      "tag": "0004_minor_jimmy_woo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1765720087470,
+      "tag": "0005_wakeful_thunderbolts",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1765720145989,
+      "tag": "0006_wet_garia",
+      "breakpoints": true
     }
   ]
 }

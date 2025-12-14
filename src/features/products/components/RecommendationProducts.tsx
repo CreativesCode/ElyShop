@@ -1,9 +1,9 @@
 "use client";
+import Header from "@/components/layouts/Header";
+import { ProductCard } from "@/features/products";
 import { gql } from "@/gql";
 import { useQuery } from "@urql/next";
 import React from "react";
-import Header from "@/components/layouts/Header";
-import { ProductCard } from "@/features/products";
 import ProductCardSkeleton from "./RecommendationProductsSkeleton";
 
 export type RecommendationProductsProps =
@@ -33,7 +33,7 @@ function RecommendationProducts({}: RecommendationProductsProps) {
   if (fetching)
     return (
       <Header heading={`We Think You'll Love`}>
-        <div className="container grid grid-cols-2 lg:grid-cols-4 gap-x-8 ">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
           {[...Array(6)].map((_, index) => (
             <ProductCardSkeleton key={index} />
           ))}
@@ -45,7 +45,7 @@ function RecommendationProducts({}: RecommendationProductsProps) {
 
   return (
     <Header heading={`We Think You'll Love`}>
-      <div className="container grid grid-cols-2 lg:grid-cols-4 gap-x-8 ">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
         {data.recommendations &&
           data.recommendations.edges.map(({ node }) => (
             <ProductCard key={node.id} product={node} />

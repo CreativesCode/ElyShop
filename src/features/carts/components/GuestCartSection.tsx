@@ -1,7 +1,4 @@
 "use client";
-import { DocumentType, gql } from "@/gql";
-import { useQuery } from "@urql/next";
-import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -11,14 +8,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import EmptyCart from "./EmptyCart";
-import CartItemCard from "./CartItemCard";
-import CheckoutButton from "./CheckoutButton";
+import { useToast } from "@/components/ui/use-toast";
+import { DocumentType, gql } from "@/gql";
+import { useQuery } from "@urql/next";
+import { useMemo } from "react";
 import useCartStore, {
   CartItems,
   calcProductCountStorage,
 } from "../useCartStore";
-import { useToast } from "@/components/ui/use-toast";
+import CartItemCard from "./CartItemCard";
+import CheckoutButton from "./CheckoutButton";
+import EmptyCart from "./EmptyCart";
 
 function GuestCartSection() {
   const { toast } = useToast();
@@ -26,10 +26,15 @@ function GuestCartSection() {
   const addProductToCart = useCartStore((s) => s.addProductToCart);
   const removeProduct = useCartStore((s) => s.removeProduct);
 
+  // Extraer IDs únicos de productos (sin las opciones)
+  const productIds = Array.from(
+    new Set(Object.keys(cartItems).map((key) => key.split("-")[0])),
+  );
+
   const [{ data, fetching, error }, _] = useQuery({
     query: FetchGuestCartQuery,
     variables: {
-      cartItems: Object.keys(cartItems).map((key) => key),
+      cartItems: productIds,
       first: 8,
     },
   });
@@ -46,22 +51,39 @@ function GuestCartSection() {
   if (fetching) return LoadingCartSection();
   if (error) return <div>Error</div>;
 
-  const addOneHandler = (productId: string, quantity: number) => {
+  const addOneHandler = (cartKey: string, quantity: number) => {
     if (quantity < 8) {
-      addProductToCart(productId, 1);
+      const currentItem = cartItems[cartKey];
+      // Extraer el productId de la clave (formato: productId-color-size-material)
+      const productId = cartKey.split("-")[0];
+      addProductToCart(
+        productId,
+        1,
+        currentItem?.color,
+        currentItem?.size,
+        currentItem?.material,
+      );
     } else {
-      toast({ title: "Proudct Limit is reached." });
+      toast({ title: "Product Limit is reached." });
     }
   };
-  const minusOneHandler = (productId: string, quantity: number) => {
+  const minusOneHandler = (cartKey: string, quantity: number) => {
     if (quantity > 1) {
-      addProductToCart(productId, -1);
+      const currentItem = cartItems[cartKey];
+      const productId = cartKey.split("-")[0];
+      addProductToCart(
+        productId,
+        -1,
+        currentItem?.color,
+        currentItem?.size,
+        currentItem?.material,
+      );
     } else {
       toast({ title: "Minimum is reached." });
     }
   };
-  const removeHandler = (productId: string) => {
-    removeProduct(productId);
+  const removeHandler = (cartKey: string) => {
+    removeProduct(cartKey);
     toast({ title: "Product Removed." });
   };
 
@@ -73,21 +95,27 @@ function GuestCartSection() {
           className="grid grid-cols-12 gap-x-6 gap-y-5"
         >
           <div className="col-span-12 md:col-span-9 max-h-[420px] md:max-h-[640px] overflow-y-auto">
-            {data.productsCollection.edges.map(({ node }) => (
-              <CartItemCard
-                key={node.id}
-                id={node.id}
-                product={node}
-                quantity={cartItems[node.id].quantity}
-                addOneHandler={() =>
-                  addOneHandler(node.id, cartItems[node.id].quantity)
-                }
-                minusOneHandler={() =>
-                  minusOneHandler(node.id, cartItems[node.id].quantity)
-                }
-                removeHandler={() => removeHandler(node.id)}
-              />
-            ))}
+            {data.productsCollection.edges.flatMap(({ node }) => {
+              // Encontrar todas las combinaciones de este producto en el carrito
+              return Object.entries(cartItems)
+                .filter(([key]) => key.startsWith(node.id + "-"))
+                .map(([cartKey, item]) => (
+                  <CartItemCard
+                    key={cartKey}
+                    id={cartKey}
+                    product={node}
+                    quantity={item.quantity}
+                    selectedColor={item.color}
+                    selectedSize={item.size}
+                    selectedMaterial={item.material}
+                    addOneHandler={() => addOneHandler(cartKey, item.quantity)}
+                    minusOneHandler={() =>
+                      minusOneHandler(cartKey, item.quantity)
+                    }
+                    removeHandler={() => removeHandler(cartKey)}
+                  />
+                ));
+            })}
           </div>
 
           <Card className="w-full h-[180px] px-3 col-span-12 md:col-span-3">
@@ -159,10 +187,13 @@ const calcSubtotal = ({
 
   if (!productPrices.length) return 0;
 
-  return productPrices.reduce(
-    (acc, cur) => acc + quantity[cur.node.id].quantity * cur.node.price,
-    0,
-  );
+  // Sumar todas las combinaciones de cada producto
+  return productPrices.reduce((acc, cur) => {
+    const productSubtotal = Object.entries(quantity)
+      .filter(([key]) => key.startsWith(cur.node.id + "-"))
+      .reduce((sum, [_, item]) => sum + item.quantity * cur.node.price, 0);
+    return acc + productSubtotal;
+  }, 0);
 };
 
 const FetchGuestCartQuery = gql(/* GraphQL */ `

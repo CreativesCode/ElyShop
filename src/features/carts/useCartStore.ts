@@ -1,45 +1,71 @@
-import { create } from "zustand";
 import { persistNSync } from "persist-and-sync";
-import { useMutation } from "@urql/next";
-import { createCartMutation, updateCartsMutation } from "./query";
+import { create } from "zustand";
 
 export type CartItem = {
   quantity: number;
+  color?: string | null;
+  size?: string | null;
+  material?: string | null;
 };
 
 export type CartItems = { [productId: string]: CartItem };
-export type ProductData = { productId: string; quantity: number };
+export type ProductData = {
+  productId: string;
+  quantity: number;
+  color?: string | null;
+  size?: string | null;
+  material?: string | null;
+};
 
 type CartStore = {
   cart: CartItems;
-  addProductToCart: (id: string, quantity: number) => void;
+  addProductToCart: (
+    id: string,
+    quantity: number,
+    color?: string | null,
+    size?: string | null,
+    material?: string | null,
+  ) => void;
   removeProduct: (id: string) => void;
   removeAllProducts: () => void;
 };
+
+// Helper para crear clave única basada en producto y opciones
+function createCartKey(
+  productId: string,
+  color?: string | null,
+  size?: string | null,
+  material?: string | null,
+): string {
+  return `${productId}-${color || "none"}-${size || "none"}-${material || "none"}`;
+}
 
 const useCartStore = create<CartStore>(
   persistNSync(
     (set) => ({
       cart: {},
-      addProductToCart: async (id, quantity) => {
+      addProductToCart: async (id, quantity, color, size, material) => {
         set((state) => {
-          const existingProduct = state.cart[id];
+          // Crear clave única para esta combinación
+          const cartKey = createCartKey(id, color, size, material);
+          const existingProduct = state.cart[cartKey];
 
           const newQuantity = existingProduct
             ? existingProduct.quantity + quantity
-            : 1;
+            : quantity;
+
           return {
             cart: {
               ...state.cart,
-              [id]: { quantity: newQuantity },
+              [cartKey]: { quantity: newQuantity, color, size, material },
             },
           };
         });
       },
-      removeProduct: (id) =>
+      removeProduct: (cartKey) =>
         set((state) => {
           const updatedCart = { ...state.cart };
-          delete updatedCart[id];
+          delete updatedCart[cartKey];
           return {
             cart: updatedCart,
           };
@@ -49,6 +75,8 @@ const useCartStore = create<CartStore>(
     { name: "cart", storage: "cookies" },
   ),
 );
+
+export { createCartKey };
 
 export const calcProductCountStorage = (cartItems: CartItems) => {
   if (!cartItems) return 0;

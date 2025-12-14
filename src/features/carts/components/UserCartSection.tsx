@@ -11,185 +11,162 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import CartItemCard from "@/features/carts/components/CartItemCard";
 import EmptyCart from "@/features/carts/components/EmptyCart";
-import { DocumentType, gql } from "@/gql";
-import { expectedErrorsHandler } from "@/lib/urql";
 import { User } from "@supabase/supabase-js";
-import { useMutation, useQuery } from "@urql/next";
-import { notFound } from "next/navigation";
-import { useMemo, useState } from "react";
-import { RemoveCartsMutation, updateCartsMutation } from "../query";
+import { useEffect, useMemo, useState } from "react";
+import { deleteCartItem, getCartItems, updateCartItemQuantity } from "../api";
 import { CartItems } from "../useCartStore";
 import CheckoutButton from "./CheckoutButton";
 
-export const FetchCartQuery = gql(/* GraphQL */ `
-  query FetchCartQuery($userId: UUID, $first: Int, $after: Cursor) {
-    cartsCollection(
-      first: $first
-      filter: { user_id: { eq: $userId } }
-      after: $after
-    ) {
-      __typename
-      edges {
-        __typename
-        node {
-          __typename
-          product_id
-          user_id
-          quantity
-          product: products {
-            ...CartItemCardFragment
-          }
-        }
-      }
-    }
-  }
-`);
-
 type UserCartSectionProps = { user: User };
 
-function UserCartSection({ user }: UserCartSectionProps) {
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
-    query: FetchCartQuery,
-    variables: {
-      userId: user.id,
-    },
-  });
+type CartItemWithProduct = {
+  id: string;
+  product_id: string;
+  quantity: number;
+  color?: string | null;
+  size?: string | null;
+  material?: string | null;
+  product: {
+    id: string;
+    slug: string;
+    name: string;
+    price: number;
+    description: string;
+    featuredImage: {
+      id: string;
+      key: string;
+      alt: string;
+    };
+  };
+};
 
+function UserCartSection({ user }: UserCartSectionProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [, updateCartProduct] = useMutation(updateCartsMutation);
-  const [, removeCart] = useMutation(RemoveCartsMutation);
+  const [cart, setCart] = useState<CartItemWithProduct[]>([]);
+  const [fetching, setFetching] = useState(true);
 
-  const cart = data && data.cartsCollection ? data.cartsCollection.edges : [];
-  const cartWithProducts = useMemo(
-    () =>
-      cart.filter(
-        (
-          item,
-        ): item is typeof item & {
-          node: { product: NonNullable<typeof item.node.product> };
-        } => item.node.product != null,
-      ),
-    [cart],
-  );
-  const subtotal = useMemo(
-    () => calcSubtotal(cartWithProducts),
-    [cartWithProducts],
-  );
-  const productCount = useMemo(() => calcProductCount(cart), [cart]);
+  const loadCart = async () => {
+    try {
+      setFetching(true);
+      const items = await getCartItems(user.id);
+      setCart(items as any);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+      toast({ title: "Error loading cart" });
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCart();
+
+    // Escuchar evento de actualización del carrito
+    const handleCartUpdate = () => loadCart();
+    window.addEventListener("cart-updated", handleCartUpdate);
+    return () => window.removeEventListener("cart-updated", handleCartUpdate);
+  }, [user.id]);
+
+  const subtotal = useMemo(() => {
+    return cart.reduce((acc, item) => {
+      return acc + item.quantity * Number(item.product?.price || 0);
+    }, 0);
+  }, [cart]);
+
+  const productCount = useMemo(() => {
+    return cart.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cart]);
 
   if (fetching) {
     return <LoadingCartSection />;
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!data || !data.cartsCollection) return notFound();
-
-  const addOneHandler = async (productId: string, quantity: number) => {
+  const addOneHandler = async (cartItemId: string, quantity: number) => {
     if (quantity < 8) {
       setIsLoading(true);
-
-      const res = await updateCartProduct({
-        productId: productId,
-        userId: user.id,
-        newQuantity: quantity + 1,
-      });
-
-      if (res.error)
-        toast({
-          title: "Error",
-          description: expectedErrorsHandler({ error: res.error }),
-        });
-
-      setIsLoading(false);
+      try {
+        await updateCartItemQuantity(cartItemId, quantity + 1);
+        await loadCart();
+      } catch (error) {
+        toast({ title: "Error updating quantity" });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
-      toast({ title: "Proudct Limit is reached." });
+      toast({ title: "Product Limit is reached." });
     }
   };
 
-  const minusOneHandler = async (productId: string, quantity: number) => {
+  const minusOneHandler = async (cartItemId: string, quantity: number) => {
     if (quantity > 1) {
       setIsLoading(true);
-
-      const res = await updateCartProduct({
-        productId: productId,
-        userId: user.id,
-        newQuantity: quantity - 1,
-      });
-
-      if (res.error)
-        toast({
-          title: "Error",
-          description: expectedErrorsHandler({ error: res.error }),
-        });
-
-      setIsLoading(false);
+      try {
+        await updateCartItemQuantity(cartItemId, quantity - 1);
+        await loadCart();
+      } catch (error) {
+        toast({ title: "Error updating quantity" });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       toast({ title: "Minimum is reached." });
     }
   };
 
-  const removeHandler = async (productId: string) => {
+  const removeHandler = async (cartItemId: string) => {
     setIsLoading(true);
-
-    const res = await removeCart({ productId, userId: user.id });
-    reexecuteQuery({ requestPolicy: "network-only" });
-
-    toast({ title: "Removed a Product." });
-
-    if (res.error) {
-      toast({
-        title: "Error",
-        description: expectedErrorsHandler({ error: res.error }),
-      });
+    try {
+      await deleteCartItem(cartItemId);
+      await loadCart();
+      toast({ title: "Removed a Product." });
+    } catch (error) {
+      toast({ title: "Error removing product" });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
-  const createCartObject = (
-    data: DocumentType<typeof FetchCartQuery>,
-  ): CartItems => {
-    const cart: CartItems = {};
-    data.cartsCollection.edges.forEach((item) => {
-      if (item.node.product) {
-        cart[item.node.product.id] = {
-          quantity: item.node.quantity,
+  const createCartObject = (): CartItems => {
+    const cartObj: CartItems = {};
+    cart.forEach((item) => {
+      if (item.product) {
+        // Usar una clave única que incluya las opciones
+        const key = `${item.product.id}-${item.color || "none"}-${item.size || "none"}-${item.material || "none"}`;
+        cartObj[key] = {
+          quantity: item.quantity,
+          color: item.color,
+          size: item.size,
+          material: item.material,
         };
       }
     });
-    return cart;
+    return cartObj;
   };
 
   return (
     <>
-      {data.cartsCollection && data.cartsCollection.edges.length > 0 ? (
+      {cart && cart.length > 0 ? (
         <section
           aria-label="Cart Section"
           className="grid grid-cols-12 gap-x-6 gap-y-5"
         >
-          <div className="col-span-12 md:col-span-9 max-h-[420px] overflow-y-auto">
-            {data.cartsCollection?.edges
-              .filter(({ node }) => node.product != null)
-              .map(({ node }) => (
-                <CartItemCard
-                  key={node.product_id}
-                  id={node.product_id}
-                  product={node.product!}
-                  quantity={node.quantity}
-                  addOneHandler={() =>
-                    addOneHandler(node.product_id, node.quantity)
-                  }
-                  minusOneHandler={() =>
-                    minusOneHandler(node.product_id, node.quantity)
-                  }
-                  removeHandler={() => removeHandler(node.product_id)}
-                  disabled={isLoading}
-                />
-              ))}
+          <div className="col-span-12 md:col-span-9 overflow-y-auto space-y-3">
+            {cart.map((item) => (
+              <CartItemCard
+                key={item.id}
+                id={item.id}
+                product={item.product}
+                quantity={item.quantity}
+                selectedColor={item.color}
+                selectedSize={item.size}
+                selectedMaterial={item.material}
+                addOneHandler={() => addOneHandler(item.id, item.quantity)}
+                minusOneHandler={() => minusOneHandler(item.id, item.quantity)}
+                removeHandler={() => removeHandler(item.id)}
+                disabled={isLoading}
+              />
+            ))}
           </div>
 
           <Card className="w-full h-[180px] px-3 col-span-12 md:col-span-3">
@@ -205,7 +182,7 @@ function UserCartSection({ user }: UserCartSectionProps) {
               <CheckoutButton
                 guest={false}
                 disabled={isLoading}
-                order={createCartObject(data)}
+                order={createCartObject()}
               />
             </CardFooter>
           </Card>
@@ -250,17 +227,3 @@ const LoadingCartSection = () => (
     </div>
   </section>
 );
-
-export const calcProductCount = (data: { node: { quantity: number } }[]) => {
-  return data.reduce((acc, cur) => acc + cur.node.quantity, 0);
-};
-
-const calcSubtotal = (
-  data: { node: { quantity: number; product?: { price: number | any } } }[],
-) => {
-  return data.reduce(
-    (acc, cur) =>
-      acc + cur.node.quantity * (Number(cur.node.product?.price) || 0),
-    0,
-  );
-};

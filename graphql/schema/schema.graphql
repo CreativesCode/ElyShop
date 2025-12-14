@@ -212,17 +212,6 @@ type Mutation {
     atMost: Int! = 1
   ): addressDeleteResponse!
 
-  """Deletes zero or more records from the `carts` collection"""
-  deleteFromcartsCollection(
-    """Restricts the mutation's impact to records matching the criteria"""
-    filter: cartsFilter
-
-    """
-    The maximum number of records in the collection permitted to be affected
-    """
-    atMost: Int! = 1
-  ): cartsDeleteResponse!
-
   """Deletes zero or more records from the `collections` collection"""
   deleteFromcollectionsCollection(
     """Restricts the mutation's impact to records matching the criteria"""
@@ -325,9 +314,6 @@ type Mutation {
   """Adds one or more `address` records to the collection"""
   insertIntoaddressCollection(objects: [addressInsertInput!]!): addressInsertResponse
 
-  """Adds one or more `carts` records to the collection"""
-  insertIntocartsCollection(objects: [cartsInsertInput!]!): cartsInsertResponse
-
   """Adds one or more `collections` records to the collection"""
   insertIntocollectionsCollection(objects: [collectionsInsertInput!]!): collectionsInsertResponse
 
@@ -371,22 +357,6 @@ type Mutation {
     """
     atMost: Int! = 1
   ): addressUpdateResponse!
-
-  """Updates zero or more records in the `carts` collection"""
-  updatecartsCollection(
-    """
-    Fields that are set will be updated for all records matching the `filter`
-    """
-    set: cartsUpdateInput!
-
-    """Restricts the mutation's impact to records matching the criteria"""
-    filter: cartsFilter
-
-    """
-    The maximum number of records in the collection permitted to be affected
-    """
-    atMost: Int! = 1
-  ): cartsUpdateResponse!
 
   """Updates zero or more records in the `collections` collection"""
   updatecollectionsCollection(
@@ -598,32 +568,6 @@ type Query {
     """Sort order to apply to the collection"""
     orderBy: [addressOrderBy!]
   ): addressConnection
-
-  """A pagable collection of type `carts`"""
-  cartsCollection(
-    """Query the first `n` records in the collection"""
-    first: Int
-
-    """Query the last `n` records in the collection"""
-    last: Int
-
-    """Query values in the collection before the provided cursor"""
-    before: Cursor
-
-    """Query values in the collection after the provided cursor"""
-    after: Cursor
-
-    """
-    Skip n values from the after cursor. Alternative to cursor pagination. Backward pagination not supported.
-    """
-    offset: Int
-
-    """Filters to apply to the results set when querying from the collection"""
-    filter: cartsFilter
-
-    """Sort order to apply to the collection"""
-    orderBy: [cartsOrderBy!]
-  ): cartsConnection
 
   """A pagable collection of type `collections`"""
   collectionsCollection(
@@ -1052,92 +996,6 @@ type addressUpdateResponse {
 
   """Array of records impacted by the mutation"""
   records: [address!]!
-}
-
-type carts implements Node {
-  """Globally Unique Record Identifier"""
-  nodeId: ID!
-  quantity: Int!
-  product_id: String!
-  user_id: UUID!
-  created_at: Datetime!
-  products: products
-}
-
-type cartsConnection {
-  edges: [cartsEdge!]!
-  pageInfo: PageInfo!
-}
-
-type cartsDeleteResponse {
-  """Count of the records impacted by the mutation"""
-  affectedCount: Int!
-
-  """Array of records impacted by the mutation"""
-  records: [carts!]!
-}
-
-type cartsEdge {
-  cursor: String!
-  node: carts!
-}
-
-input cartsFilter {
-  quantity: IntFilter
-  product_id: StringFilter
-  user_id: UUIDFilter
-  created_at: DatetimeFilter
-  nodeId: IDFilter
-
-  """
-  Returns true only if all its inner filters are true, otherwise returns false
-  """
-  and: [cartsFilter!]
-
-  """
-  Returns true if at least one of its inner filters is true, otherwise returns false
-  """
-  or: [cartsFilter!]
-
-  """Negates a filter"""
-  not: cartsFilter
-}
-
-input cartsInsertInput {
-  quantity: Int
-  product_id: String
-  user_id: UUID
-  created_at: Datetime
-}
-
-type cartsInsertResponse {
-  """Count of the records impacted by the mutation"""
-  affectedCount: Int!
-
-  """Array of records impacted by the mutation"""
-  records: [carts!]!
-}
-
-input cartsOrderBy {
-  quantity: OrderByDirection
-  product_id: OrderByDirection
-  user_id: OrderByDirection
-  created_at: OrderByDirection
-}
-
-input cartsUpdateInput {
-  quantity: Int
-  product_id: String
-  user_id: UUID
-  created_at: Datetime
-}
-
-type cartsUpdateResponse {
-  """Count of the records impacted by the mutation"""
-  affectedCount: Int!
-
-  """Array of records impacted by the mutation"""
-  records: [carts!]!
 }
 
 type collections implements Node {
@@ -1912,30 +1770,6 @@ type products implements Node {
   show_in_slider: Boolean
   collections: collections
   medias: medias
-  cartsCollection(
-    """Query the first `n` records in the collection"""
-    first: Int
-
-    """Query the last `n` records in the collection"""
-    last: Int
-
-    """Query values in the collection before the provided cursor"""
-    before: Cursor
-
-    """Query values in the collection after the provided cursor"""
-    after: Cursor
-
-    """
-    Skip n values from the after cursor. Alternative to cursor pagination. Backward pagination not supported.
-    """
-    offset: Int
-
-    """Filters to apply to the results set when querying from the collection"""
-    filter: cartsFilter
-
-    """Sort order to apply to the collection"""
-    orderBy: [cartsOrderBy!]
-  ): cartsConnection
   commentsCollection(
     """Query the first `n` records in the collection"""
     first: Int
@@ -2192,30 +2026,6 @@ type profiles implements Node {
     """Sort order to apply to the collection"""
     orderBy: [commentsOrderBy!]
   ): commentsConnection
-  ordersCollection(
-    """Query the first `n` records in the collection"""
-    first: Int
-
-    """Query the last `n` records in the collection"""
-    last: Int
-
-    """Query values in the collection before the provided cursor"""
-    before: Cursor
-
-    """Query values in the collection after the provided cursor"""
-    after: Cursor
-
-    """
-    Skip n values from the after cursor. Alternative to cursor pagination. Backward pagination not supported.
-    """
-    offset: Int
-
-    """Filters to apply to the results set when querying from the collection"""
-    filter: ordersFilter
-
-    """Sort order to apply to the collection"""
-    orderBy: [ordersOrderBy!]
-  ): ordersConnection
   addressCollection(
     """Query the first `n` records in the collection"""
     first: Int
@@ -2240,6 +2050,30 @@ type profiles implements Node {
     """Sort order to apply to the collection"""
     orderBy: [addressOrderBy!]
   ): addressConnection
+  ordersCollection(
+    """Query the first `n` records in the collection"""
+    first: Int
+
+    """Query the last `n` records in the collection"""
+    last: Int
+
+    """Query values in the collection before the provided cursor"""
+    before: Cursor
+
+    """Query values in the collection after the provided cursor"""
+    after: Cursor
+
+    """
+    Skip n values from the after cursor. Alternative to cursor pagination. Backward pagination not supported.
+    """
+    offset: Int
+
+    """Filters to apply to the results set when querying from the collection"""
+    filter: ordersFilter
+
+    """Sort order to apply to the collection"""
+    orderBy: [ordersOrderBy!]
+  ): ordersConnection
 }
 
 type profilesConnection {

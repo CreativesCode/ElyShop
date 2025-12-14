@@ -1,0 +1,2 @@
+ALTER TABLE "carts" DROP CONSTRAINT "user_poduct_cart_id";--> statement-breakpoint
+ALTER TABLE "carts" ADD CONSTRAINT "user_product_options_cart_id" PRIMARY KEY("user_id","product_id","color","size","material");

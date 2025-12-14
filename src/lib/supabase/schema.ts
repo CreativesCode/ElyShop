@@ -37,11 +37,18 @@ export type InsertUserProfiles = InferInsertModel<typeof profiles>;
 export const carts = pgTable(
   "carts",
   {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
     quantity: integer("quantity").notNull(),
     productId: text("product_id")
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
     userId: uuid("user_id").notNull(),
+    color: text("color"),
+    size: text("size"),
+    material: text("material"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -51,10 +58,6 @@ export const carts = pgTable(
   },
   (table) => {
     return {
-      pkWithCustomName: primaryKey({
-        name: "user_poduct_cart_id",
-        columns: [table.userId, table.productId],
-      }),
       product: foreignKey({
         columns: [table.productId],
         foreignColumns: [products.id],

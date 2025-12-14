@@ -2,19 +2,35 @@ import { gql } from "@/gql";
 
 export const createCartMutation = gql(/* GraphQL */ `
   mutation createCartMutation(
+    $id: String!
     $productId: String
     $userId: UUID
     $quantity: Int
+    $color: String
+    $size: String
+    $material: String
   ) {
     insertIntocartsCollection(
-      objects: { user_id: $userId, product_id: $productId, quantity: $quantity }
+      objects: {
+        id: $id
+        user_id: $userId
+        product_id: $productId
+        quantity: $quantity
+        color: $color
+        size: $size
+        material: $material
+      }
     ) {
       affectedCount
       records {
         __typename
+        id
         product_id
         user_id
         quantity
+        color
+        size
+        material
         product: products {
           ...CartItemCardFragment
         }
@@ -24,32 +40,30 @@ export const createCartMutation = gql(/* GraphQL */ `
 `);
 
 export const RemoveCartsMutation = gql(/* GraphQL */ `
-  mutation RemoveCartsMutation($productId: String!, $userId: UUID!) {
-    deleteFromcartsCollection(
-      filter: { product_id: { eq: $productId }, user_id: { eq: $userId } }
-    ) {
+  mutation RemoveCartsMutation($id: String!) {
+    deleteFromcartsCollection(filter: { id: { eq: $id } }) {
       affectedCount
     }
   }
 `);
 
 export const updateCartsMutation = gql(/* GraphQL */ `
-  mutation UpdateCartsMutation(
-    $userId: UUID
-    $productId: String
-    $newQuantity: Int
-  ) {
+  mutation UpdateCartsMutation($id: String!, $newQuantity: Int) {
     updatecartsCollection(
-      filter: { product_id: { eq: $productId }, user_id: { eq: $userId } }
+      filter: { id: { eq: $id } }
       set: { quantity: $newQuantity }
     ) {
       affectedCount
       records {
         __typename
         nodeId
+        id
         product_id
         user_id
         quantity
+        color
+        size
+        material
         product: products {
           ...CartItemCardFragment
         }

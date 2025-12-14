@@ -48,7 +48,12 @@ function AddProductToCartForm({
   });
 
   async function onSubmit(values: AddProductCartData) {
-    addProductToCart(values.quantity);
+    addProductToCart(
+      values.quantity,
+      values.color,
+      values.size,
+      values.material,
+    );
   }
 
   const addOne = () => {

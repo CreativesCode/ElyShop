@@ -1,11 +1,10 @@
 "use client";
 import { useAuth } from "@/providers/AuthProvider";
 import { User } from "@supabase/auth-helpers-nextjs";
-import { useQuery } from "@urql/next";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getCartItems } from "../api";
 import useCartStore, { calcProductCountStorage } from "../useCartStore";
 import CartLink from "./CartLink";
-import { FetchCartQuery } from "./UserCartSection";
 
 function CartNav() {
   const { user } = useAuth();
@@ -23,28 +22,40 @@ const GuestCart = () => {
 };
 
 const UserCartNav = ({ currentUser }: { currentUser: User }) => {
-  const [{ data, fetching, error }, refetch] = useQuery({
-    query: FetchCartQuery,
-    variables: {
-      userId: currentUser.id,
-    },
-  });
+  const [cart, setCart] = useState<any[]>([]);
+  const [fetching, setFetching] = useState(true);
 
-  const carts = data?.cartsCollection;
+  const loadCart = async () => {
+    try {
+      setFetching(true);
+      const items = await getCartItems(currentUser.id);
+      setCart(items || []);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+      setCart([]);
+    } finally {
+      setFetching(false);
+    }
+  };
 
-  const productCount = useMemo(
-    () => (carts?.edges || []).reduce((acc, cur) => acc + cur.node.quantity, 0),
-    [carts.edges],
-  );
+  useEffect(() => {
+    loadCart();
 
-  return (
-    <div>
-      {error && <CartLink productCount={0} />}
+    // Escuchar evento de actualización del carrito
+    const handleCartUpdate = () => loadCart();
+    window.addEventListener("cart-updated", handleCartUpdate);
+    return () => window.removeEventListener("cart-updated", handleCartUpdate);
+  }, [currentUser.id]);
 
-      {fetching && <CartLink productCount={0} />}
+  const productCount = useMemo(() => {
+    return cart.reduce((acc, item) => acc + (item.quantity || 0), 0);
+  }, [cart]);
 
-      {carts && <CartLink productCount={productCount} />}
-    </div>
-  );
+  if (fetching) {
+    return <CartLink productCount={0} />;
+  }
+
+  return <CartLink productCount={productCount} />;
 };
+
 export default CartNav;

@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/card";
 
 import { keytoUrl, stripHtml } from "@/lib/utils";
-import { UseQueryExecute } from "@urql/next";
 import Link from "next/link";
 import { Icons } from "../../../components/layouts/icons";
 import { Button } from "../../../components/ui/button";
@@ -43,6 +42,9 @@ type CartItemCardProps = React.ComponentProps<typeof Card> & {
   minusOneHandler: () => void;
   removeHandler: () => void;
   quantity: number;
+  selectedColor?: string | null;
+  selectedSize?: string | null;
+  selectedMaterial?: string | null;
 };
 
 function CartItemCard({
@@ -52,37 +54,86 @@ function CartItemCard({
   minusOneHandler,
   removeHandler,
   quantity,
+  selectedColor,
+  selectedSize,
+  selectedMaterial,
 }: CartItemCardProps) {
+  const hasOptions = selectedColor || selectedSize || selectedMaterial;
+
   return (
     <Card className="flex items-center justify-between gap-x-6 gap-y-8 px-5 py-3 shadow-none border-0 border-b">
-      <CardContent className="relative p-0 mb-5 overflow-hidden ">
-        <Image
-          src={keytoUrl(product.featuredImage.key)}
-          alt={product.featuredImage.alt}
-          width={150}
-          height={150}
-          className="aspect-square object-cover"
-        />
-      </CardContent>
+      <div className="flex items-center gap-x-6">
+        <CardContent className="relative p-0 overflow-hidden ">
+          <Image
+            src={keytoUrl(product.featuredImage.key)}
+            alt={product.featuredImage.alt}
+            width={150}
+            height={150}
+            className="aspect-square object-cover"
+          />
+        </CardContent>
 
-      <CardHeader className="p-0 mb-3 md:mb-5 grow max-w-lg">
-        <CardTitle>
-          <Link href={`/shop/${product.slug}`} className="hover:underline">
-            {product.name}
-          </Link>
-        </CardTitle>
+        <CardHeader className="p-0 mb-3 md:mb-5 grow max-w-lg">
+          <CardTitle>
+            <Link href={`/shop/${product.slug}`} className="hover:underline">
+              {product.name}
+            </Link>
+          </CardTitle>
 
-        <CardDescription className="grow line-clamp-2">
-          {stripHtml(product.description)}
-        </CardDescription>
+          {hasOptions ? (
+            <CardDescription className="grow space-y-1.5 mt-2">
+              {selectedColor && (
+                <div className="flex items-center gap-x-2 flex-wrap">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Color:
+                  </span>
+                  <div className="flex items-center gap-x-1.5">
+                    <div
+                      className="w-4 h-4 rounded-full border border-gray-300"
+                      style={{ backgroundColor: selectedColor }}
+                      title={selectedColor}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      {selectedColor}
+                    </span>
+                  </div>
+                </div>
+              )}
+              {selectedSize && (
+                <div className="flex items-center gap-x-2 flex-wrap">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Talla:
+                  </span>
+                  <span className="text-xs px-1.5 py-0.5 rounded border border-gray-300 bg-gray-50 text-gray-700">
+                    {selectedSize}
+                  </span>
+                </div>
+              )}
+              {selectedMaterial && (
+                <div className="flex items-center gap-x-2 flex-wrap">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Material:
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {selectedMaterial}
+                  </span>
+                </div>
+              )}
+            </CardDescription>
+          ) : (
+            <CardDescription className="grow line-clamp-2">
+              {stripHtml(product.description)}
+            </CardDescription>
+          )}
 
-        <QuantityInput
-          value={quantity}
-          addOneHandler={addOneHandler}
-          minusOneHandler={minusOneHandler}
-          disabled={disabled}
-        />
-      </CardHeader>
+          <QuantityInput
+            value={quantity}
+            addOneHandler={addOneHandler}
+            minusOneHandler={minusOneHandler}
+            disabled={disabled}
+          />
+        </CardHeader>
+      </div>
 
       <CardFooter className="gap-x-2 md:gap-x-5 p-0 ">
         <p>$ {product.price}</p>
