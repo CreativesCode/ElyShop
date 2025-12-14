@@ -13,6 +13,8 @@ import { toTitleCase, unslugify } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 interface CategoryPageProps {
   params: {
     collectionSlug: string;

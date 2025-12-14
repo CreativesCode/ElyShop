@@ -9,6 +9,8 @@ import {
 import Link from "next/link";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 async function CartPage() {
   return (
     <Shell>
