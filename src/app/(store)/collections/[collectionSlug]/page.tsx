@@ -1,4 +1,3 @@
-import SectionHeading from "@/components/layouts/SectionHeading";
 import { Shell } from "@/components/layouts/Shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getPageTitle, siteConfig } from "@/config/site";
@@ -133,11 +132,6 @@ async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <Shell className="max-w-screen-2xl mx-auto">
       <CollectionBanner collectionBannerData={collection} />
-      <SectionHeading
-        heading={collection.title}
-        description={collection.description}
-      />
-
       <Suspense
         fallback={
           <div>

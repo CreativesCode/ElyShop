@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import * as z from "zod";
 
 import {
   DropdownMenu,
@@ -177,7 +176,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
         </div>
 
         <div className="flex gap-x-5 items-center">
-          <label htmlFor="sort" className="">
+          <label htmlFor="sort" className="text-nowrap">
             Sort by:
           </label>
 
@@ -249,7 +248,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
                 />
               </div>
 
-              <label htmlFor="sort" className="">
+              <label htmlFor="sort" className="text-nowrap">
                 Sort by:
               </label>
 

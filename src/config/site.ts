@@ -8,6 +8,7 @@ export const siteConfig = {
   address: "1600 Amphitheatre Parkway in Mountain View, California",
   phone: "+1(234)-567-8901",
   email: "hello@hugo-coding.com",
+  zones: "Santa Clara, Placetas, Encrucijada y Calabazar de Sagua",
   mainNav: [
     {
       title: "Shop",

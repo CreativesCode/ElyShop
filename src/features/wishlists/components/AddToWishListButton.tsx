@@ -69,14 +69,14 @@ function AddToWishListButton({ productId }: Props) {
   };
   return (
     <Button
-      className="rounded-full p-1 bg-primary-50 justify-center shadow-md"
+      className="rounded-full p-0 md:p-1 bg-primary-50 justify-center shadow-md"
       variant="secondary"
       size="icon"
       onClick={onClickHandler}
     >
       <Icons.heart
         className={cn(
-          "w-6 h-6",
+          "md:w-6 md:h-6 w-4 h-4",
           wishlist[productId]
             ? "fill-primary stroke-primary"
             : "fill-none stroke-primary",

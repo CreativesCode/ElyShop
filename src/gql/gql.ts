@@ -33,6 +33,8 @@ const documents = {
     types.ProductDetailPageQueryDocument,
   "\n  query CategoriesSubNavQuery {\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          title\n          parent_id\n          order\n        }\n      }\n    }\n  }\n":
     types.CategoriesSubNavQueryDocument,
+  "\n  query FooterCategoriesQuery {\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          parent_id\n        }\n      }\n    }\n  }\n":
+    types.FooterCategoriesQueryDocument,
   "\n  fragment CartItemCardFragment on products {\n    id\n    slug\n    name\n    price\n    description\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n":
     types.CartItemCardFragmentFragmentDoc,
   "\n  query FetchGuestCartQuery(\n    $cartItems: [String!]\n    $first: Int\n    $after: Cursor\n  ) {\n    productsCollection(\n      first: $first\n      after: $after\n      filter: { id: { in: $cartItems } }\n    ) {\n      edges {\n        node {\n          id\n          ...CartItemCardFragment\n        }\n      }\n    }\n  }\n":
@@ -47,7 +49,7 @@ const documents = {
     types.UpdateCartsMutationDocument,
   "\n  query ListCartQuery($userId: UUID) {\n    cartsCollection(filter: { user_id: { eq: $userId } }) {\n      edges {\n        node {\n          __typename\n          quantity\n          user_id\n          product_id\n        }\n      }\n    }\n  }\n":
     types.ListCartQueryDocument,
-  "\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n":
+  "\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    description\n    parent_id\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n    collections {\n      id\n      label\n      slug\n    }\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          title\n        }\n      }\n    }\n  }\n":
     types.CollectionBannerFragmentFragmentDoc,
   "\n  fragment CollectionCardFragment on collections {\n    id\n    label\n    slug\n    featuredImage: medias {\n      key\n      alt\n    }\n  }\n":
     types.CollectionCardFragmentFragmentDoc,
@@ -173,6 +175,12 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
+  source: "\n  query FooterCategoriesQuery {\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          parent_id\n        }\n      }\n    }\n  }\n",
+): (typeof documents)["\n  query FooterCategoriesQuery {\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          parent_id\n        }\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
   source: "\n  fragment CartItemCardFragment on products {\n    id\n    slug\n    name\n    price\n    description\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n",
 ): (typeof documents)["\n  fragment CartItemCardFragment on products {\n    id\n    slug\n    name\n    price\n    description\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n"];
 /**
@@ -215,8 +223,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n",
-): (typeof documents)["\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n  }\n"];
+  source: "\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    description\n    parent_id\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n    collections {\n      id\n      label\n      slug\n    }\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          title\n        }\n      }\n    }\n  }\n",
+): (typeof documents)["\n  fragment CollectionBannerFragment on collections {\n    id\n    label\n    slug\n    description\n    parent_id\n    featuredImage: medias {\n      id\n      key\n      alt\n    }\n    collections {\n      id\n      label\n      slug\n    }\n    collectionsCollection(orderBy: [{ order: DescNullsLast }]) {\n      edges {\n        node {\n          id\n          label\n          slug\n          title\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

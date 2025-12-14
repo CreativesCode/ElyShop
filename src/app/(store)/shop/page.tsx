@@ -1,10 +1,7 @@
 import Header from "@/components/layouts/Header";
 import { Shell } from "@/components/layouts/Shell";
-import { Skeleton } from "@/components/ui/skeleton";
-import { listCollectionsAction } from "@/features/collections";
-import { SearchProductsGridSkeleton } from "@/features/products";
 import {
-  FilterSelections,
+  SearchProductsGridSkeleton,
   SearchProductsInifiteScroll,
 } from "@/features/search";
 import { Suspense } from "react";
@@ -20,7 +17,7 @@ async function ProductsPage({}: ProductsPageProps) {
   // const collectionsData = await listCollectionsAction();
 
   return (
-    <Shell>
+    <Shell className="max-w-screen-2xl mx-auto">
       <Header heading="Shop Now" />
 
       {/* <Suspense

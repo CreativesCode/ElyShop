@@ -1,6 +1,7 @@
 import { Shell } from "@/components/layouts/Shell";
 import { Icons } from "@/components/layouts/icons";
 import { buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 import { CollectionCardFragment } from "@/features/collections";
 import {
   ProductCard,
@@ -136,13 +137,16 @@ function HeroSection() {
       <div className="container absolute py-8 h-screen md:h-[800px] w-full">
         <div className="flex flex-col justify-center z-30 h-full max-w-screen-2xl mx-auto">
           <p className="text-sm md:text-md uppercase tracking-widest text-white ">
-            hugolam
+            {siteConfig.name}
           </p>
           <h1 className="text-5xl md:text-9xl font-bold text-white my-4">
-            Utilized with
+            Moda para
             <br />
-            GraphQL:
+            el día a día.
           </h1>
+          <p className="text-sm md:text-md tracking-widest text-white mb-4">
+            Envíos en {siteConfig.zones} • Encargos Shein/Temu/Amazon.
+          </p>
 
           <div className="flex space-x-4 mt-5 max-w-screen">
             <Link
@@ -154,20 +158,20 @@ function HeroSection() {
                 "hover:text-zinc-600 hover:bg-white",
               )}
             >
-              New in
+              Nuevos productos
             </Link>
 
-            <Link
+            {/* <Link
               href="https://github.com/clonglam/HIYORI-master"
               target="_blank"
               className={cn(
                 buttonVariants({ variant: "default", size: "lg" }),
                 "border-2 border-primary text-white rounded px-8 py-3 ",
-                "md:px-16 md:py-6",
+                "md:px-16 md:py-6"
               )}
             >
               View the Code
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -271,7 +275,7 @@ function DifferentFeatureCards() {
       Icon: Icons.package,
       title: "Envío a domicilio",
       description:
-        "Entregamos a domicilio en Santa Clara, Placetas y Calabazal de Sagua. También coordinamos puntos de entrega según tu ubicación.",
+        "Entregamos a domicilio en Santa Clara, Placetas, Encrucijada y Calabazar de Sagua. También coordinamos puntos de entrega según tu ubicación.",
     },
     {
       Icon: Icons.award,

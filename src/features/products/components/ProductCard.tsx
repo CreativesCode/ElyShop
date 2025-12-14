@@ -153,7 +153,7 @@ export function ProductCard({
           <Suspense
             fallback={
               <Button variant="ghost" disabled>
-                <Icons.heart className={"w-6 h-6 fill-none"} />
+                <Icons.heart className={"w-4 h-4 md:w-6 md:h-6 fill-none"} />
               </Button>
             }
           >
@@ -162,18 +162,18 @@ export function ProductCard({
         </div>
       </CardContent>
 
-      <CardHeader className="p-1 px-4 mb-2 md:mb-3 flex flex-col">
+      <CardHeader className="p-1 px-2 md:px-4 mb-2 md:mb-3 flex flex-col">
         <div>
           <CardTitle>
             <Link
               href={`/shop/${slug}`}
-              className="hover:underline text-lg text-primary-800"
+              className="hover:underline text-base md:text-lg text-primary-800"
             >
               {name}
             </Link>
           </CardTitle>
 
-          <div className="flex justify-between">
+          <div className="flex md:justify-between flex-col md:flex-row">
             <div className="">${price}</div>
 
             <div className="text-sm">
@@ -191,7 +191,7 @@ export function ProductCard({
             </div>
           </div>
         </div>
-        <div className="flex justify-between mt-0">
+        <div className="flex flex-col md:flex-row md:justify-between mt-0 gap-y-2">
           <div className="flex items-center gap-x-1 flex-wrap">
             {colorsToShow.length > 0 &&
               colorsToShow.map((color) => (

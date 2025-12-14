@@ -1,9 +1,9 @@
 "use client";
+import { Icons } from "@/components/layouts/icons";
+import { Badge } from "@/components/ui/badge";
 import { SearchQuery } from "@/features/search";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import { Icons } from "@/components/layouts/icons";
-import { Badge } from "@/components/ui/badge";
 
 type FilterBadgesProps = {
   query: SearchQuery;
@@ -18,6 +18,10 @@ function FilterBadges({
 }: FilterBadgesProps) {
   const pathname = usePathname();
   const router = useRouter();
+
+  if (!query.search && !query.priceRange && !collections) {
+    return null;
+  }
 
   return (
     <section className="gap-x-10 md:flex hidden">
