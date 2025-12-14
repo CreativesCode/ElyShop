@@ -141,3 +141,46 @@ export async function deleteCartItem(id: string) {
   if (error) throw error;
   return true;
 }
+
+// Limpiar todo el carrito del usuario
+export async function clearUserCart(userId: string) {
+  const supabase = createClient();
+
+  const { error } = await supabase.from("carts").delete().eq("user_id", userId);
+
+  if (error) throw error;
+  return true;
+}
+
+// Verificar stock disponible antes de agregar al carrito
+export async function checkAvailableStock(
+  productId: string,
+  requestedQty: number,
+  color?: string | null,
+  size?: string | null,
+  material?: string | null,
+): Promise<{
+  availableStock: number;
+  hasStock: boolean;
+  requestedQty: number;
+}> {
+  const response = await fetch("/api/inventory/check-stock", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      productId,
+      requestedQty,
+      color,
+      size,
+      material,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to check stock");
+  }
+
+  return response.json();
+}

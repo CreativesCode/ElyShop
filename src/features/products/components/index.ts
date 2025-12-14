@@ -13,6 +13,8 @@ export {
 export { default as RecommendationProducts } from "./RecommendationProducts";
 export { default as RecommendationProductsSkeleton } from "./RecommendationProductsSkeleton";
 export { SizeSelector } from "./SizeSelector";
+export { ProductStockDisplay } from "./ProductStockDisplay";
+export { ProductStockAndFormWrapper } from "./ProductStockAndFormWrapper";
 export * from "./admin/ProductForm";
 export { default as ProductForm } from "./admin/ProductForm";
 export { default as ProductsColumns } from "./admin/ProductsColumns";

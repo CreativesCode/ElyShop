@@ -11,9 +11,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import CartItemCard from "@/features/carts/components/CartItemCard";
 import EmptyCart from "@/features/carts/components/EmptyCart";
+import { WhatsAppCheckoutButton } from "@/features/orders";
 import { User } from "@supabase/supabase-js";
 import { useEffect, useMemo, useState } from "react";
-import { deleteCartItem, getCartItems, updateCartItemQuantity } from "../api";
+import {
+  checkAvailableStock,
+  deleteCartItem,
+  getCartItems,
+  updateCartItemQuantity,
+} from "../api";
 import { CartItems } from "../useCartStore";
 import CheckoutButton from "./CheckoutButton";
 
@@ -82,19 +88,48 @@ function UserCartSection({ user }: UserCartSectionProps) {
     return <LoadingCartSection />;
   }
 
-  const addOneHandler = async (cartItemId: string, quantity: number) => {
-    if (quantity < 8) {
-      setIsLoading(true);
-      try {
+  const addOneHandler = async (
+    cartItemId: string,
+    quantity: number,
+    productId: string,
+    color?: string | null,
+    size?: string | null,
+    material?: string | null,
+  ) => {
+    setIsLoading(true);
+    try {
+      // Verificar stock disponible antes de incrementar
+      const stockCheck = await checkAvailableStock(
+        productId,
+        quantity + 1,
+        color,
+        size,
+        material,
+      );
+
+      if (!stockCheck.hasStock) {
+        toast({
+          title: "Stock Insuficiente",
+          description: `Solo hay ${stockCheck.availableStock} unidades disponibles.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (quantity < 8) {
         await updateCartItemQuantity(cartItemId, quantity + 1);
         await loadCart();
-      } catch (error) {
-        toast({ title: "Error updating quantity" });
-      } finally {
-        setIsLoading(false);
+      } else {
+        toast({ title: "Product Limit is reached." });
       }
-    } else {
-      toast({ title: "Product Limit is reached." });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la cantidad.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -161,7 +196,16 @@ function UserCartSection({ user }: UserCartSectionProps) {
                 selectedColor={item.color}
                 selectedSize={item.size}
                 selectedMaterial={item.material}
-                addOneHandler={() => addOneHandler(item.id, item.quantity)}
+                addOneHandler={() =>
+                  addOneHandler(
+                    item.id,
+                    item.quantity,
+                    item.product_id,
+                    item.color,
+                    item.size,
+                    item.material,
+                  )
+                }
                 minusOneHandler={() => minusOneHandler(item.id, item.quantity)}
                 removeHandler={() => removeHandler(item.id)}
                 disabled={isLoading}
@@ -178,7 +222,18 @@ function UserCartSection({ user }: UserCartSectionProps) {
               <p className="text-3xl md:text-lg lg:text-2xl font-bold">{`$ ${subtotal.toFixed(2).toString()}`}</p>
             </CardContent>
 
-            <CardFooter className="gap-x-2 md:gap-x-5 px-3">
+            <CardFooter className="gap-x-2 md:gap-x-5 px-3 flex-col gap-y-3">
+              <WhatsAppCheckoutButton
+                cartItems={cart.map((item) => ({
+                  productId: item.product_id,
+                  quantity: item.quantity,
+                  color: item.color,
+                  size: item.size,
+                  material: item.material,
+                }))}
+                disabled={isLoading}
+                className="w-full"
+              />
               <CheckoutButton
                 guest={false}
                 disabled={isLoading}

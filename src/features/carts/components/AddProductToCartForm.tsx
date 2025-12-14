@@ -2,6 +2,7 @@
 import { QuantityInput } from "@/components/layouts/QuantityInput";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -17,6 +18,7 @@ import { ColorPicker } from "@/features/products/components/ColorPicker";
 import { MaterialSelector } from "@/features/products/components/MaterialSelector";
 import { SizeSelector } from "@/features/products/components/SizeSelector";
 import { useAuth } from "@/providers/AuthProvider";
+import { useAvailableStock } from "../hooks/useAvailableStock";
 import useCartActions from "../hooks/useCartActions";
 import { AddProductCartData, AddProductToCartSchema } from "../validations";
 
@@ -25,6 +27,11 @@ interface AddProductToCartFormProps {
   colors?: string[] | null;
   sizes?: string[] | null;
   materials?: string[] | null;
+  onVariantChange?: {
+    color?: (color: string | undefined) => void;
+    size?: (size: string | undefined) => void;
+    material?: (material: string | undefined) => void;
+  };
 }
 
 function AddProductToCartForm({
@@ -32,10 +39,10 @@ function AddProductToCartForm({
   colors,
   sizes,
   materials,
+  onVariantChange,
 }: AddProductToCartFormProps) {
   const { user } = useAuth();
   const { addProductToCart } = useCartActions(user, productId);
-  const maxQuantity = 8;
 
   const form = useForm<AddProductCartData>({
     resolver: zodResolver(AddProductToCartSchema),
@@ -46,6 +53,35 @@ function AddProductToCartForm({
       material: undefined,
     },
   });
+
+  // Observar los valores actuales del formulario
+  const selectedColor = form.watch("color");
+  const selectedSize = form.watch("size");
+  const selectedMaterial = form.watch("material");
+
+  // Notificar cambios en las variantes
+  useEffect(() => {
+    onVariantChange?.color?.(selectedColor);
+  }, [selectedColor, onVariantChange]);
+
+  useEffect(() => {
+    onVariantChange?.size?.(selectedSize);
+  }, [selectedSize, onVariantChange]);
+
+  useEffect(() => {
+    onVariantChange?.material?.(selectedMaterial);
+  }, [selectedMaterial, onVariantChange]);
+
+  // Obtener el stock disponible para la variante seleccionada
+  const { availableStock, isLoading: isLoadingStock } = useAvailableStock(
+    productId,
+    selectedColor,
+    selectedSize,
+    selectedMaterial,
+  );
+
+  // Limitar la cantidad máxima al stock disponible o 8 (lo que sea menor)
+  const maxQuantity = availableStock !== null ? Math.min(availableStock, 8) : 8;
 
   async function onSubmit(values: AddProductCartData) {
     addProductToCart(
@@ -130,20 +166,46 @@ function AddProductToCartForm({
             control={form.control}
             name="quantity"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>Quantity</FormLabel>
-                <FormControl>
-                  <QuantityInput
-                    {...field}
-                    addOneHandler={addOne}
-                    minusOneHandler={minusOne}
-                  />
-                </FormControl>
+                <div className="flex items-center gap-x-2">
+                  <FormControl>
+                    <QuantityInput
+                      {...field}
+                      addOneHandler={addOne}
+                      minusOneHandler={minusOne}
+                    />
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    disabled={isLoadingStock || availableStock === 0}
+                  >
+                    Add to Cart
+                  </Button>
+                </div>
+                {availableStock !== null && (
+                  <p
+                    className={`text-xs mt-1 ${
+                      availableStock === 0
+                        ? "text-red-500"
+                        : availableStock <= 5
+                          ? "text-orange-500"
+                          : "text-gray-500"
+                    }`}
+                  >
+                    {availableStock === 0
+                      ? "Sin stock disponible"
+                      : availableStock === 1
+                        ? "¡Solo 1 unidad disponible!"
+                        : availableStock <= 5
+                          ? `¡Solo ${availableStock} unidades disponibles!`
+                          : `${availableStock} unidades disponibles`}
+                  </p>
+                )}
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Add to Cart</Button>
         </div>
       </form>
     </Form>

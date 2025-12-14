@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { User } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import {
+  checkAvailableStock,
   createCartItem,
   findCartItemByOptions,
   updateCartItemQuantity,
@@ -32,12 +33,30 @@ function useCartActions(user: User | null, productId: string) {
         material,
       );
 
+      // Calcular la cantidad total que se tendría en el carrito
+      const totalQuantity = (existedItem?.quantity || 0) + quantity;
+
+      // Verificar stock disponible antes de agregar
+      const stockCheck = await checkAvailableStock(
+        productId,
+        totalQuantity,
+        color,
+        size,
+        material,
+      );
+
+      if (!stockCheck.hasStock) {
+        toast({
+          title: "Stock Insuficiente",
+          description: `Solo hay ${stockCheck.availableStock} unidades disponibles. Ya tienes ${existedItem?.quantity || 0} en tu carrito.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (existedItem) {
         // Actualizar cantidad de la combinación existente
-        await updateCartItemQuantity(
-          existedItem.id,
-          existedItem.quantity + quantity,
-        );
+        await updateCartItemQuantity(existedItem.id, totalQuantity);
       } else {
         // Crear nueva entrada para esta combinación
         await createCartItem({
@@ -56,7 +75,11 @@ function useCartActions(user: User | null, productId: string) {
       window.dispatchEvent(new Event("cart-updated"));
     } catch (err) {
       console.error("Error adding to cart:", err);
-      toast({ title: "Error, Unexpected Error occurred." });
+      toast({
+        title: "Error",
+        description: "No se pudo agregar el producto al carrito.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

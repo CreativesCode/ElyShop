@@ -7,9 +7,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { getPageMetadata } from "@/config/site";
-import { AddProductToCartForm } from "@/features/carts";
 // import { ProductCommentsSection } from "@/features/comments";
-import { ProductCard, ProductImageShowcase } from "@/features/products";
+import {
+  ProductCard,
+  ProductImageShowcase,
+  ProductStockAndFormWrapper,
+} from "@/features/products";
 import { AddToWishListButton } from "@/features/wishlists";
 import { gql } from "@/gql";
 import { getServiceClient } from "@/lib/urql-service";
@@ -96,37 +99,17 @@ async function ProductDetailPage({ params }: Props) {
             <AddToWishListButton productId={id} />
           </section>
 
-          <section className="mb-2">
-            {data.productsCollection.edges[0].node.stock === 0 ? (
-              <div className="text-red-500 font-semibold text-lg">
-                Out of Stock
-              </div>
-            ) : data.productsCollection.edges[0].node.stock &&
-              data.productsCollection.edges[0].node.stock < 5 ? (
-              <div className="text-yellow-600 font-semibold">
-                Low Stock - Only {data.productsCollection.edges[0].node.stock}{" "}
-                left!
-              </div>
-            ) : (
-              <div className="text-green-600 font-semibold">
-                In Stock ({data.productsCollection.edges[0].node.stock}{" "}
-                available)
-              </div>
-            )}
-          </section>
+          <Suspense>
+            <ProductStockAndFormWrapper
+              productId={id}
+              totalStock={data.productsCollection.edges[0].node.stock || 0}
+              colors={colors as string[] | null}
+              sizes={sizes as string[] | null}
+              materials={materials as string[] | null}
+            />
+          </Suspense>
 
-          <section className="flex mb-2 items-end space-x-2">
-            <Suspense>
-              <AddProductToCartForm
-                productId={id}
-                colors={colors as string[] | null}
-                sizes={sizes as string[] | null}
-                materials={materials as string[] | null}
-              />
-            </Suspense>
-
-            {/* <BuyNowButton productId={id} /> */}
-          </section>
+          {/* <BuyNowButton productId={id} /> */}
 
           <section>
             <Accordion type="single" collapsible>

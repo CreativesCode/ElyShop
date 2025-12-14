@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { Icons } from "@/components/layouts/icons";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import DeleteDialog from "@/components/ui/deleteDialog";
 import {
@@ -11,11 +10,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { gql, DocumentType } from "@/gql";
+import { DocumentType, gql } from "@/gql";
 import { cn } from "@/lib/utils";
-import { Icon } from "@radix-ui/react-select";
-import { Icons } from "@/components/layouts/icons";
-import { Badge } from "@/components/ui/badge";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { formatOrderNumber } from "../../utils/whatsapp";
 
 export const OrderColumnsFragment = gql(/* GraphQL */ `
   fragment OrderColumnsFragment on orders {
@@ -38,7 +38,7 @@ const OrdersColumns: ColumnDef<{
 }>[] = [
   {
     accessorKey: "label",
-    header: () => <div className="text-left capitalize">Label</div>,
+    header: () => <div className="text-left capitalize">Order Number</div>,
     cell: ({ row }) => {
       const order = row.original.node;
 
@@ -47,7 +47,7 @@ const OrdersColumns: ColumnDef<{
           href={`/admin/orders/${order.id}`}
           className="text-center font-medium capitalize px-3 hover:underline"
         >
-          {order.id}
+          {formatOrderNumber(order.id)}
         </Link>
       );
     },

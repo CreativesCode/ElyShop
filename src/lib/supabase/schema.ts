@@ -215,6 +215,19 @@ export const productsRelations = relations(products, ({ one }) => ({
 }));
 
 export type PaymentStatus = "paid" | "unpaid" | "no_payment_required";
+export type OrderStatus =
+  | "pending_confirmation"
+  | "pending_payment"
+  | "paid"
+  | "cancelled";
+
+export type CustomerData = {
+  name: string;
+  phone: string;
+  zone: string;
+  address?: string;
+  notes?: string;
+};
 
 export const orders = pgTable(
   "orders",
@@ -230,13 +243,20 @@ export const orders = pgTable(
     user_id: uuid("user_id").references(() => profiles.id, {
       onDelete: "no action",
     }),
-    order_status: text("order_status"),
+    order_status: text("order_status", {
+      enum: ["pending_confirmation", "pending_payment", "paid", "cancelled"],
+    }),
     addressId: text("addressId"),
     stripe_payment_intent_id: text("stripe_payment_intent_id"),
     payment_status: text("payment_status", {
       enum: ["paid", "unpaid", "no_payment_required"],
     }).notNull(),
     payment_method: text("payment_method"),
+    // Campos nuevos para WhatsApp checkout
+    customer_data: json("customer_data").$type<CustomerData>(),
+    phone: text("phone"),
+    zone: text("zone"),
+    shipping_cost: decimal("shipping_cost", { precision: 8, scale: 2 }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -317,6 +337,86 @@ export const orderLinesRelations = relations(orderLines, ({ one }) => ({
     references: [orders.id],
   }),
 }));
+
+// Tabla de reservas de inventario (soft reserve)
+export type ReservationStatus = "active" | "consumed" | "released";
+
+export const inventoryReservations = pgTable(
+  "inventory_reservations",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "restrict" }),
+    // Información de la variante reservada
+    color: text("color"),
+    size: text("size"),
+    material: text("material"),
+    quantity: integer("quantity").notNull(),
+    status: text("status", {
+      enum: ["active", "consumed", "released"],
+    })
+      .notNull()
+      .default("active"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "string",
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+      mode: "string",
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      order: foreignKey({
+        columns: [table.orderId],
+        foreignColumns: [orders.id],
+        name: "reservation_to_order",
+      })
+        .onDelete("cascade")
+        .onUpdate("cascade"),
+      product: foreignKey({
+        columns: [table.productId],
+        foreignColumns: [products.id],
+        name: "reservation_to_product",
+      })
+        .onDelete("restrict")
+        .onUpdate("cascade"),
+    };
+  },
+);
+
+export type SelectInventoryReservation = InferSelectModel<
+  typeof inventoryReservations
+>;
+export type InsertInventoryReservation = InferInsertModel<
+  typeof inventoryReservations
+>;
+
+export const inventoryReservationsRelations = relations(
+  inventoryReservations,
+  ({ one }) => ({
+    order: one(orders, {
+      fields: [inventoryReservations.orderId],
+      references: [orders.id],
+    }),
+    product: one(products, {
+      fields: [inventoryReservations.productId],
+      references: [products.id],
+    }),
+  }),
+);
 
 export const address = pgTable("address", {
   id: text("id")

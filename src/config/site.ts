@@ -9,6 +9,8 @@ export const siteConfig = {
   phone: "+1(234)-567-8901",
   email: "hello@hugo-coding.com",
   zones: "Santa Clara, Placetas, Encrucijada y Calabazar de Sagua",
+  whatsappPhone: "+5353077035", // Número de WhatsApp para pedidos
+  orderPrefix: "KS", // Prefijo para números de orden (ej: KS-1042)
   mainNav: [
     {
       title: "Shop",
