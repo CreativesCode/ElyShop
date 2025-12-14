@@ -127,25 +127,12 @@ const CollectionsColumns: ColumnDef<{
             >
               Edit Collections
             </Link>
-            <DeleteCollectionDialog collectionId={collection.id} />
+            {/* <DeleteCollectionDialog collectionId={collection.id} /> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
   },
 ];
-
-const DeleteCollectionDialog = () => {
-  const onClickHandler = async () => {
-    // await deleteCategoryAction(categoryId)
-  };
-  return (
-    <DeleteDialog
-      onClickHandler={onClickHandler}
-      title="Delete Collection"
-      actionLabel="Delete"
-    />
-  );
-};
 
 export default CollectionsColumns;

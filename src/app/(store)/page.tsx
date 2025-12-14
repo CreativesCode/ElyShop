@@ -7,6 +7,8 @@ import {
   ProductCard,
   ProductCardFragment,
   ProductCardSkeleton,
+  ProductSlider,
+  ProductSliderSkeleton,
 } from "@/features/products";
 import { getCurrentUser } from "@/features/users/actions";
 import { DocumentType, gql } from "@/gql";
@@ -16,12 +18,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
 const LandingRouteQuery = gql(/* GraphQL */ `
   query LandingRouteQuery($user_id: UUID) {
     products: productsCollection(
       filter: { featured: { eq: true } }
       first: 4
+      orderBy: [{ created_at: DescNullsLast }]
+    ) {
+      edges {
+        node {
+          id
+          ...ProductCardFragment
+        }
+      }
+    }
+
+    sliderProducts: productsCollection(
+      filter: { show_in_slider: { eq: true } }
+      first: 20
       orderBy: [{ created_at: DescNullsLast }]
     ) {
       edges {
@@ -83,6 +97,7 @@ export default async function Home() {
             collections={data.collectionScrollCards.edges}
           />
         ) : null}
+
         {/* {data.products && data.products.edges ? (
           <FeaturedProductsCards products={data.products.edges} />
         ) : null} */}
@@ -96,6 +111,17 @@ export default async function Home() {
           collectionHref="/collections/swimwear"
           imageLeft={true}
         />
+
+        {data.sliderProducts &&
+        data.sliderProducts.edges &&
+        data.sliderProducts.edges.length > 0 ? (
+          <Suspense fallback={<ProductSliderSkeleton />}>
+            <ProductSlider
+              products={data.sliderProducts.edges}
+              title="Productos Destacados"
+            />
+          </Suspense>
+        ) : null}
 
         <BannerCollectionCard
           imageSrc="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/banner-cupboard.jpg"
@@ -121,20 +147,20 @@ export default async function Home() {
 
 function HeroSection() {
   return (
-    <section className="w-full h-screen md:h-[800px] mx-auto flex justify-center">
-      <div className="relative w-full h-full md:h-[800px]">
+    <section className="w-full h-[400px] md:h-[800px] mx-auto flex justify-center">
+      <div className="relative w-full h-[400px] md:h-[800px]">
         <Image
           alt="Furniture"
           src="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/bg-hero.png"
           priority={true}
           width={1920}
           height={800}
-          quality={100}
+          quality={75}
           className="h-full w-full object-cover object-center"
         />
       </div>
 
-      <div className="container absolute py-8 h-screen md:h-[800px] w-full">
+      <div className="container absolute py-8 h-[400px] md:h-[800px] w-full">
         <div className="flex flex-col justify-center z-30 h-full max-w-screen-2xl mx-auto">
           <p className="text-sm md:text-md uppercase tracking-widest text-white ">
             {siteConfig.name}
@@ -189,16 +215,18 @@ interface CollectionsCardsProps {
 
 function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
   return (
-    <section className="flex justify-center items-center gap-x-10 overflow-auto py-12">
+    <section className="flex justify-start md:justify-center items-center gap-x-6 md:gap-x-10 overflow-x-auto py-12 px-6 md:px-8">
       {collections.map(({ node }) => (
         <Link
           href={`/collections/${node.slug}`}
           key={`collection_circle_${node.id}`}
+          className="flex-shrink-0"
         >
           <div
             className={cn(
               "relative bg-secondary rounded-full flex justify-center items-center overflow-hidden shadow-md",
-              "w-[240px] h-[240px]",
+              "w-[180px] h-[180px]",
+              "md:w-[240px] md:h-[240px]",
               // "md:w-[320px] md:h-[320px]"
               // "lg:w-[360px] lg:h-[360px]"
             )}
@@ -210,7 +238,8 @@ function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
               height={320}
               className={cn(
                 "object-center object-cover hover:scale-105 transition-all duration-500 rounded-full",
-                "w-[240px] h-[240px]",
+                "w-[180px] h-[180px]",
+                "md:w-[240px] md:h-[240px]",
                 // "md:w-[280px] md:h-[280px]",
                 // "lg:w-[320px] lg:h-[320px]"
               )}

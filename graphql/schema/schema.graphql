@@ -1909,6 +1909,7 @@ type products implements Node {
   colors: JSON
   sizes: JSON
   materials: JSON
+  show_in_slider: Boolean
   collections: collections
   medias: medias
   cartsCollection(
@@ -2065,6 +2066,7 @@ input productsFilter {
   stock: IntFilter
   collection_id: StringFilter
   featured_image_id: StringFilter
+  show_in_slider: BooleanFilter
   nodeId: IDFilter
 
   """
@@ -2100,6 +2102,7 @@ input productsInsertInput {
   colors: JSON
   sizes: JSON
   materials: JSON
+  show_in_slider: Boolean
 }
 
 type productsInsertResponse {
@@ -2124,6 +2127,7 @@ input productsOrderBy {
   stock: OrderByDirection
   collection_id: OrderByDirection
   featured_image_id: OrderByDirection
+  show_in_slider: OrderByDirection
 }
 
 input productsUpdateInput {
@@ -2145,6 +2149,7 @@ input productsUpdateInput {
   colors: JSON
   sizes: JSON
   materials: JSON
+  show_in_slider: Boolean
 }
 
 type productsUpdateResponse {

@@ -22,6 +22,13 @@
       "when": 1765660235449,
       "tag": "0002_lumpy_forgotten_one",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1765679128590,
+      "tag": "0003_premium_starbolt",
+      "breakpoints": true
     }
   ]
 }

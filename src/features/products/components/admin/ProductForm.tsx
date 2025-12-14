@@ -3,6 +3,7 @@
 import { createProductAction, updateProductAction } from "@/_actions/products";
 import { Icons } from "@/components/layouts/icons";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import ColorsField from "@/components/ui/colorsField";
 import {
   Form,
@@ -46,7 +47,9 @@ type ProductsFormProps = {
   initialAdditionalImages?: string[];
 };
 
-type ProductFormData = InsertProducts & { additionalImages?: string[] };
+type ProductFormData = Omit<InsertProducts, "additionalImages"> & {
+  additionalImages?: string[];
+};
 
 const productFormSchema = createInsertSchema(products).extend({
   additionalImages: z.array(z.string()).optional(),
@@ -82,17 +85,19 @@ function ProductFrom({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       ...product,
+      featured: product?.featured ?? false,
+      showInSlider: product?.showInSlider ?? false,
       additionalImages:
         initialAdditionalImages && initialAdditionalImages.length > 0
           ? initialAdditionalImages
           : [""],
-    },
+    } as ProductFormData,
   });
 
   const { register, control, handleSubmit } = form;
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control as any,
     name: "additionalImages",
   });
 
@@ -201,26 +206,51 @@ function ProductFrom({
             <FormMessage />
           </FormItem>
 
-          {/* <FormField
+          <FormField
             control={form.control}
             name="featured"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                 <FormControl>
-                  <FormLabel>Featured*</FormLabel>
                   <Checkbox
-                    defaultChecked={false}
+                    defaultChecked={product?.featured || false}
                     checked={field.value || false}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-
-                <FormDescription>
-                  You can manage your mobile notifications in the{" "}
-                </FormDescription>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Featured</FormLabel>
+                  <FormDescription>
+                    Marca este producto como destacado
+                  </FormDescription>
+                </div>
               </FormItem>
             )}
-          /> */}
+          />
+
+          <FormField
+            control={form.control}
+            name="showInSlider"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                <FormControl>
+                  <Checkbox
+                    defaultChecked={product?.showInSlider || false}
+                    checked={field.value || false}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Mostrar en Slider</FormLabel>
+                  <FormDescription>
+                    Marca este producto para que aparezca en el slider de
+                    productos
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
           <Suspense>
             {data && data.collectionsCollection && (
               <FormField

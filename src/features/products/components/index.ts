@@ -5,6 +5,11 @@ export { MaterialSelector } from "./MaterialSelector";
 export { default as ProductCard, ProductCardFragment } from "./ProductCard";
 export { default as ProductCardSkeleton } from "./ProductCardSkeleton";
 export { default as ProductImageShowcase } from "./ProductImageShowcase";
+export {
+  default as ProductSlider,
+  ProductSliderQuery,
+  ProductSliderSkeleton,
+} from "./ProductSlider";
 export { default as RecommendationProducts } from "./RecommendationProducts";
 export { default as RecommendationProductsSkeleton } from "./RecommendationProductsSkeleton";
 export { SizeSelector } from "./SizeSelector";

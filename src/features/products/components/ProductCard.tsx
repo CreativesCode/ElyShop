@@ -39,6 +39,7 @@ export const ProductCardFragment = gql(/* GraphQL */ `
     colors
     sizes
     materials
+    show_in_slider
     featuredImage: medias {
       id
       key
@@ -162,7 +163,7 @@ export function ProductCard({
         </div>
       </CardContent>
 
-      <CardHeader className="p-1 px-2 md:px-4 mb-2 md:mb-3 flex flex-col">
+      <CardHeader className="p-1 px-2 pb-2 md:pb-4 md:px-4 flex flex-col">
         <div>
           <CardTitle>
             <Link

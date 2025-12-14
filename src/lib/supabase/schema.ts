@@ -160,6 +160,7 @@ export const products = pgTable(
     slug: varchar("slug", { length: 191 }).notNull().unique(),
     description: text("description"),
     featured: boolean("featured").default(false),
+    showInSlider: boolean("show_in_slider").default(false),
     badge: text("badge", { enum: ["new_product", "best_sale", "featured"] }),
     rating: decimal("rating", { precision: 2, scale: 1 })
       .notNull()

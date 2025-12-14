@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "show_in_slider" boolean DEFAULT false;
