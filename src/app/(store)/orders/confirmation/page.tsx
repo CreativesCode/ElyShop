@@ -18,7 +18,7 @@ export default function OrderConfirmationPage({
 
   if (!orderId || !orderNumber) {
     return (
-      <Shell>
+      <Shell className="max-w-screen-2xl mx-auto">
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
@@ -36,7 +36,7 @@ export default function OrderConfirmationPage({
   }
 
   return (
-    <Shell className="max-w-3xl mx-auto py-12">
+    <Shell className="max-w-screen-2xl mx-auto py-12">
       <Card>
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">

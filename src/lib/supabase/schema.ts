@@ -216,9 +216,12 @@ export const productsRelations = relations(products, ({ one }) => ({
 
 export type PaymentStatus = "paid" | "unpaid" | "no_payment_required";
 export type OrderStatus =
-  | "pending_confirmation"
-  | "pending_payment"
-  | "paid"
+  | "pending_confirmation" // creada + stock reservado; falta confirmar envío/total/disponibilidad
+  | "pending_payment" // total confirmado; esperando pago fuera de la app
+  | "paid" // pago confirmado
+  | "processing" // preparando/gestionando pedido (packing/compra por encargo)
+  | "shipped" // en camino / enviado (delivery o mensajero)
+  | "delivered" // entregado y confirmado
   | "cancelled";
 
 export type CustomerData = {
@@ -244,7 +247,15 @@ export const orders = pgTable(
       onDelete: "no action",
     }),
     order_status: text("order_status", {
-      enum: ["pending_confirmation", "pending_payment", "paid", "cancelled"],
+      enum: [
+        "pending_confirmation",
+        "pending_payment",
+        "paid",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
     }),
     addressId: text("addressId"),
     stripe_payment_intent_id: text("stripe_payment_intent_id"),

@@ -1,9 +1,7 @@
 "use client";
 
-import { Icons } from "@/components/layouts/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import DeleteDialog from "@/components/ui/deleteDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DocumentType, gql } from "@/gql";
+import { OrderStatus } from "@/lib/supabase/schema";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { getOrderStatusInfo } from "../../utils/orderStatus";
 import { formatOrderNumber } from "../../utils/whatsapp";
 
 export const OrderColumnsFragment = gql(/* GraphQL */ `
@@ -57,18 +57,37 @@ const OrdersColumns: ColumnDef<{
     header: () => <div className="">Order Status</div>,
     cell: ({ row }) => {
       const order = row.original.node;
+      const status = order.order_status as OrderStatus;
+
+      if (!status) {
+        return <span className="text-muted-foreground">Sin estado</span>;
+      }
+
+      // Validar que el status existe en nuestro enum
+      const statusInfo = getOrderStatusInfo(status);
+
+      if (!statusInfo) {
+        return (
+          <Badge variant="outline" className="text-muted-foreground">
+            {status}
+          </Badge>
+        );
+      }
+
+      const Icon = statusInfo.icon;
 
       return (
-        <div className="font-medium flex items-center gap-3">
-          {order.order_status == "pending" ? (
-            <Icons.pending size={15} />
-          ) : order.order_status == "preparing" ? (
-            <Icons.package size={15} />
-          ) : (
-            ""
+        <Badge
+          variant="outline"
+          className={cn(
+            "font-medium flex items-center gap-2 w-fit",
+            statusInfo.color,
+            statusInfo.borderColor,
           )}
-          {order.order_status}
-        </div>
+        >
+          <Icon size={14} />
+          {statusInfo.label}
+        </Badge>
       );
     },
   },
@@ -134,18 +153,5 @@ const OrdersColumns: ColumnDef<{
     },
   },
 ];
-
-const DeleteCollectionDialog = ({ collectionId }: { collectionId: string }) => {
-  const onClickHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    // await deleteCategoryAction(categoryId)
-  };
-  return (
-    <DeleteDialog
-      onClickHandler={onClickHandler}
-      title="Delete Collection"
-      actionLabel="Delete"
-    />
-  );
-};
 
 export default OrdersColumns;

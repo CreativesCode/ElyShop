@@ -9,7 +9,7 @@ type TrackOrderProps = {
 
 function TrackOrderPage({ params: { orderId } }: TrackOrderProps) {
   return (
-    <Shell layout="narrow">
+    <Shell layout="narrow" className="max-w-screen-2xl mx-auto">
       <h2 className="text-xl font-semibold">Arrive at Tomorrow 22:00 </h2>
       <div>
         <p>

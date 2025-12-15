@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { getClient } from "@/lib/urql";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import React from "react";
 
 const OrderPageQuery = gql(/* GraphQL */ `
   query OrderPageQuery($first: Int!, $userId: UUID) {
@@ -48,15 +47,15 @@ async function OrderPage() {
   if (!data) return notFound();
 
   return (
-    <Shell layout="narrow">
-      <h1 className="pb-8 text-3xl font-semibold border-b">Orders</h1>
+    <Shell layout="narrow" className="max-w-screen-2xl mx-auto">
+      <h1 className="pb-8 text-3xl font-semibold border-b">Órdenes</h1>
 
-      <div className="grid grid-cols-12 gap-x-5">
-        <section className="col-span-9">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-x-5">
+        <section className="col-span-1 md:col-span-9">
           <OrdersList orders={data.ordersCollection.edges} />
         </section>
 
-        <section className="col-span-3">
+        <section className="col-span-1 md:col-span-3">
           <BuyAgainCard products={data.productsCollection.edges} />
         </section>
       </div>

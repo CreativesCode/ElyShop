@@ -1,12 +1,13 @@
 "use client";
 import { DocumentType, gql } from "@/gql";
-import React from "react";
-import { Card, CardContent, CardHeader } from "../../../components/ui/card";
-import Image from "next/image";
-import { cn, formatPrice, keytoUrl, stripHtml } from "@/lib/utils";
+import { cn, formatPrice, keytoUrl } from "@/lib/utils";
 import dayjs from "dayjs";
+import "dayjs/locale/es";
+import Image from "next/image";
 import Link from "next/link";
 import { Button, buttonVariants } from "../../../components/ui/button";
+import { Card, CardContent, CardHeader } from "../../../components/ui/card";
+import { formatOrderNumber } from "../utils/whatsapp";
 
 type OrdersListProps = {
   orders: DocumentType<typeof OrdersListFragment>[];
@@ -51,9 +52,9 @@ function OrdersList({ orders }: OrdersListProps) {
         <Card key={order.id}>
           <CardHeader className="px-6 py-3 flex flex-row justify-between items-center bg-zinc-100">
             <div>
-              <p className="font-medium text-xs">Order Placed</p>
+              <p className="font-medium text-xs">Fecha</p>
               <p className="text-sm">
-                {dayjs(order.created_at).format("MMMM DD, YYYY")}
+                {dayjs(order.created_at).locale("es").format("DD MMMM, YYYY")}
               </p>
             </div>
 
@@ -63,8 +64,8 @@ function OrdersList({ orders }: OrdersListProps) {
             </div>
 
             <div>
-              <p className="font-medium text-xs">Order</p>
-              <p className="text-sm">#{order.id}</p>
+              <p className="font-medium text-xs">Id de pedido</p>
+              <p className="text-sm">{formatOrderNumber(order.id)}</p>
             </div>
           </CardHeader>
 
@@ -95,9 +96,6 @@ function OrdersList({ orders }: OrdersListProps) {
                         >
                           {product.name}
                         </Link>
-                        <p className="line-clamp-2 tracking-tighter leading-tight">
-                          {stripHtml(product.description)}
-                        </p>
                       </div>
                     </div>
                   );

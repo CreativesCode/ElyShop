@@ -102,7 +102,10 @@ export default function OrderActionsButtons({
     (orderStatus === "pending_confirmation" ||
       orderStatus === "pending_payment");
 
-  const canCancel = orderStatus !== "cancelled" && orderStatus !== "paid";
+  const canCancel =
+    orderStatus !== "cancelled" &&
+    orderStatus !== "delivered" &&
+    orderStatus !== "shipped";
 
   return (
     <div className="space-y-2">

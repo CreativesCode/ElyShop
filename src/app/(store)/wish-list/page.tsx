@@ -12,7 +12,7 @@ type Props = {};
 
 function WishListPage({}: Props) {
   return (
-    <Shell>
+    <Shell className="max-w-screen-2xl mx-auto">
       <section className="flex justify-between items-center py-8">
         <h1 className="text-3xl">Your Wishlist</h1>
         <Link href="/shop">Continue shopping</Link>

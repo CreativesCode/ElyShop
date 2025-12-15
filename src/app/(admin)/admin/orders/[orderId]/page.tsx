@@ -3,9 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import OrderActionsButtons from "@/features/orders/components/admin/OrderActionsButtons";
+import OrderStatusChanger from "@/features/orders/components/admin/OrderStatusChanger";
+import { getOrderStatusInfo } from "@/features/orders/utils/orderStatus";
 import { formatOrderNumber } from "@/features/orders/utils/whatsapp";
 import db from "@/lib/supabase/db";
-import { medias, orderLines, orders, products } from "@/lib/supabase/schema";
+import {
+  OrderStatus,
+  medias,
+  orderLines,
+  orders,
+  products,
+} from "@/lib/supabase/schema";
 import { formatPrice, keytoUrl } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
@@ -53,6 +61,17 @@ export default async function AdminOrderDetailPage({
 
   const orderNumber = formatOrderNumber(order.id);
   const customerData = order.customer_data as any;
+  const orderStatus = (order.order_status ||
+    "pending_confirmation") as OrderStatus;
+  const statusInfo = getOrderStatusInfo(orderStatus) || {
+    label: "Desconocido",
+    description: "Estado desconocido",
+    icon: () => null,
+    color: "text-gray-700",
+    bgColor: "bg-gray-50",
+    borderColor: "border-gray-300",
+  };
+  const StatusIcon = statusInfo.icon;
 
   return (
     <AdminShell
@@ -89,8 +108,12 @@ export default async function AdminOrderDetailPage({
                   <p className="text-sm text-muted-foreground">
                     Estado del Pedido
                   </p>
-                  <Badge variant="outline" className="mt-1">
-                    {order.order_status || "pending"}
+                  <Badge
+                    variant="outline"
+                    className={`mt-1 ${statusInfo.color} ${statusInfo.borderColor}`}
+                  >
+                    <StatusIcon size={14} className="mr-1" />
+                    {statusInfo.label}
                   </Badge>
                 </div>
                 <div>
@@ -185,6 +208,9 @@ export default async function AdminOrderDetailPage({
 
         {/* Columna lateral - Cliente y acciones */}
         <div className="space-y-6">
+          {/* Cambiar Estado */}
+          <OrderStatusChanger orderId={order.id} currentStatus={orderStatus} />
+
           {/* Acciones */}
           <Card>
             <CardHeader>

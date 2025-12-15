@@ -4,5 +4,6 @@ export { default as OrderProgress } from "./OrderProgress";
 export { default as OrdersList } from "./OrdersList";
 export { default as WhatsAppCheckoutButton } from "./WhatsAppCheckoutButton";
 export { default as OrderActionsButtons } from "./admin/OrderActionsButtons";
+export { default as OrderStatusChanger } from "./admin/OrderStatusChanger";
 export * from "./admin/OrdersColumns";
 export { default as OrdersColumns } from "./admin/OrdersColumns";

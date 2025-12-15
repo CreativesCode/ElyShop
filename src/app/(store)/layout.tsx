@@ -11,9 +11,7 @@ async function StoreLayout({ children }: Props) {
     <>
       <Navbar />
       <CategoriesSubNav />
-      <main className="pt-[50px] md:pt-[114px] min-h-screen max-w-screen-2xl mx-auto">
-        {children}
-      </main>
+      <main className="pt-[50px] md:pt-[114px] min-h-screen">{children}</main>
       <CartSheet />
       <MainFooter />
     </>
