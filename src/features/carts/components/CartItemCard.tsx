@@ -170,7 +170,7 @@ function CartItemCard({
           variant="ghost"
           onClick={removeHandler}
         >
-          <Icons.close size={20} />
+          <Icons.trash className="text-destructive" size={20} />
         </Button>
       </CardFooter>
     </Card>

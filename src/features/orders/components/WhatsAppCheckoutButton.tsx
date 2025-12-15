@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { MessageCircle } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CustomerInfoInput } from "../validations";
@@ -114,8 +114,14 @@ export function WhatsAppCheckoutButton({
           className={className}
           disabled={disabled || cartItems.length === 0}
         >
-          <MessageCircle className="mr-2 h-4 w-4" />
-          Pagar por WhatsApp
+          <Image
+            src="/assets/whatsapp.svg"
+            alt="WhatsApp"
+            width={20}
+            height={20}
+            className="mr-2 h-4 w-4"
+          />
+          Continuar con WhatsApp
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">

@@ -21,7 +21,6 @@ import {
   updateCartItemQuantity,
 } from "../api";
 import { CartItems } from "../useCartStore";
-import CheckoutButton from "./CheckoutButton";
 
 type UserCartSectionProps = { user: User };
 
@@ -220,8 +219,8 @@ function UserCartSection({ user }: UserCartSectionProps) {
 
           <Card className="w-full h-[180px] px-3 col-span-12 md:col-span-3">
             <CardHeader className="px-3 pt-2 pb-0 text-md">
-              <CardTitle className="text-lg mb-0">Subtotoal: </CardTitle>
-              <CardDescription>{`${productCount} Items`}</CardDescription>
+              <CardTitle className="text-lg mb-0">Subtotal: </CardTitle>
+              <CardDescription>{`${productCount} producto${productCount > 1 ? "s" : ""}`}</CardDescription>
             </CardHeader>
             <CardContent className="relative overflow-hidden px-3 py-2">
               <p className="text-3xl md:text-lg lg:text-2xl font-bold">{`$ ${subtotal.toFixed(2).toString()}`}</p>
@@ -239,11 +238,11 @@ function UserCartSection({ user }: UserCartSectionProps) {
                 disabled={isLoading}
                 className="w-full"
               />
-              <CheckoutButton
+              {/* <CheckoutButton
                 guest={false}
                 disabled={isLoading}
                 order={createCartObject()}
-              />
+              /> */}
             </CardFooter>
           </Card>
         </section>
