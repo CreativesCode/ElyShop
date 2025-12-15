@@ -125,7 +125,16 @@ async function ProductDetailPage({ params }: Props) {
                   Yes. It adheres to the WAI-ARIA design pattern.
                 </AccordionContent>
               </AccordionItem> */}
-              <AccordionItem value="item-3">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Descripción</AccordionTrigger>
+                <AccordionContent>
+                  <div
+                    className="mt-2 text-sm leading-relaxed [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-2 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-2 [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800"
+                    dangerouslySetInnerHTML={{ __html: description || "" }}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
                 <AccordionTrigger>Envío y devoluciones</AccordionTrigger>
                 <AccordionContent>
                   El costo de envío se calcula según tu dirección y se muestra
@@ -141,13 +150,6 @@ async function ProductDetailPage({ params }: Props) {
           </section>
         </div>
       </div>
-
-      <Header heading={`Descripción:`} className="pt-2 pb-2">
-        <div
-          className="mt-2 text-sm leading-relaxed [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mb-2 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-2 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-2 [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800"
-          dangerouslySetInnerHTML={{ __html: description || "" }}
-        />
-      </Header>
 
       <Header heading={`We Think You'll Love`} />
 

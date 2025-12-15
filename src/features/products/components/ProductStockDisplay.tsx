@@ -28,6 +28,7 @@ export function ProductStockDisplay({
     hasVariantsSelected ? selectedColor : undefined,
     hasVariantsSelected ? selectedSize : undefined,
     hasVariantsSelected ? selectedMaterial : undefined,
+    hasVariantsSelected, // Solo hacer la llamada si hay variantes seleccionadas
   );
 
   // Si hay variantes seleccionadas y tenemos el stock disponible, usarlo

@@ -7,12 +7,21 @@ export function useAvailableStock(
   color?: string | null,
   size?: string | null,
   material?: string | null,
+  enabled: boolean = true,
 ) {
   const [availableStock, setAvailableStock] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Solo hacer la llamada si está habilitado (todas las variantes requeridas están seleccionadas)
+    if (!enabled) {
+      setAvailableStock(null);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
     async function fetchStock() {
       try {
         setIsLoading(true);
@@ -37,7 +46,7 @@ export function useAvailableStock(
     }
 
     fetchStock();
-  }, [productId, color, size, material]);
+  }, [productId, color, size, material, enabled]);
 
   return { availableStock, isLoading, error };
 }

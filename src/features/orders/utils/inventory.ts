@@ -73,14 +73,6 @@ export async function getAvailableStock(
   // Stock disponible = stock total - reservas activas
   const availableStock = totalStock - reservedQty;
 
-  console.log(`📦 Stock calculation for ${productId}:`, {
-    totalStock,
-    reservedQty,
-    availableStock,
-    variant: variantOptions,
-    reservedResult: reservedQtyResult,
-  });
-
   return Math.max(0, availableStock);
 }
 

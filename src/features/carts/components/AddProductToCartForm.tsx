@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { Spinner } from "@/components/ui/spinner";
 import { ColorPicker } from "@/features/products/components/ColorPicker";
 import { MaterialSelector } from "@/features/products/components/MaterialSelector";
 import { SizeSelector } from "@/features/products/components/SizeSelector";
@@ -72,12 +73,26 @@ function AddProductToCartForm({
     onVariantChange?.material?.(selectedMaterial);
   }, [selectedMaterial, onVariantChange]);
 
+  // Validar que todas las variantes disponibles estén seleccionadas
+  const hasColors = colors && colors.length > 0;
+  const hasSizes = sizes && sizes.length > 0;
+  const hasMaterials = materials && materials.length > 0;
+
+  const isColorValid = !hasColors || (hasColors && selectedColor !== undefined);
+  const isSizeValid = !hasSizes || (hasSizes && selectedSize !== undefined);
+  const isMaterialValid =
+    !hasMaterials || (hasMaterials && selectedMaterial !== undefined);
+
+  const areAllVariantsSelected = isColorValid && isSizeValid && isMaterialValid;
+
   // Obtener el stock disponible para la variante seleccionada
+  // Solo se verifica cuando todas las variantes requeridas están seleccionadas
   const { availableStock, isLoading: isLoadingStock } = useAvailableStock(
     productId,
     selectedColor,
     selectedSize,
     selectedMaterial,
+    areAllVariantsSelected,
   );
 
   // Limitar la cantidad máxima al stock disponible o 8 (lo que sea menor)
@@ -178,8 +193,15 @@ function AddProductToCartForm({
                   </FormControl>
                   <Button
                     type="submit"
-                    disabled={isLoadingStock || availableStock === 0}
+                    disabled={
+                      isLoadingStock ||
+                      availableStock === 0 ||
+                      !areAllVariantsSelected
+                    }
                   >
+                    {isLoadingStock && (
+                      <Spinner className="mr-2 h-4 w-4" aria-hidden="true" />
+                    )}
                     Add to Cart
                   </Button>
                 </div>
