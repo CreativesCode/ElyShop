@@ -7,9 +7,9 @@
  * Ejecutar con: npx tsx scripts/update-order-statuses.ts
  */
 
+import { orders } from "@/lib/supabase/schema";
 import { eq } from "drizzle-orm";
 import db from "../src/lib/supabase/db";
-import { orders } from "@/lib/supabase/schema";
 
 async function updateOrderStatuses() {
   console.log("🔄 Iniciando actualización de estados de órdenes...\n");
@@ -48,8 +48,8 @@ async function updateOrderStatuses() {
 
         updatedCount++;
       }
-      // Mapear estados antiguos si existen
-      else if (order.order_status === "pending") {
+      // Mapear estados antiguos si existen (usando string para permitir valores legacy)
+      else if ((order.order_status as string) === "pending") {
         newStatus = "pending_confirmation";
 
         console.log(`📝 Orden ${order.id}: pending -> ${newStatus}`);
@@ -60,7 +60,7 @@ async function updateOrderStatuses() {
           .where(eq(orders.id, order.id));
 
         updatedCount++;
-      } else if (order.order_status === "preparing") {
+      } else if ((order.order_status as string) === "preparing") {
         newStatus = "processing";
 
         console.log(`📝 Orden ${order.id}: preparing -> ${newStatus}`);

@@ -36,7 +36,7 @@ export default function OrderConfirmationPage({
   }
 
   return (
-    <Shell className="max-w-screen-2xl mx-auto py-12">
+    <Shell layout="narrow">
       <Card>
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">

@@ -1,21 +1,35 @@
 import { Shell } from "@/components/layouts/Shell";
 import { BuyAgainCard, OrdersList } from "@/features/orders/components";
+import { BuyAgainCardFragment } from "@/features/orders/components/BuyAgainCard";
+import { OrdersListFragment } from "@/features/orders/components/OrdersList";
 import { gql } from "@/gql";
 import { createClient } from "@/lib/supabase/server";
-import { getClient } from "@/lib/urql";
+import { getServiceClient } from "@/lib/urql-service";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
+// Import fragments to ensure they're available for gql.tada
+// Reference them to ensure gql.tada includes them in the query
+void BuyAgainCardFragment;
+void OrdersListFragment;
+
 const OrderPageQuery = gql(/* GraphQL */ `
-  query OrderPageQuery($first: Int!, $userId: UUID) {
+  query OrderPageQuery($first: Int!, $userId: UUID, $after: Cursor) {
     ordersCollection(
       first: $first
+      after: $after
       orderBy: [{ created_at: DescNullsLast }]
       filter: { user_id: { eq: $userId } }
     ) {
       __typename
       edges {
         ...OrdersListFragment
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        endCursor
+        startCursor
       }
     }
 
@@ -27,7 +41,13 @@ const OrderPageQuery = gql(/* GraphQL */ `
   }
 `);
 
-async function OrderPage() {
+interface OrderPageProps {
+  searchParams: {
+    after?: string;
+  };
+}
+
+async function OrderPage({ searchParams }: OrderPageProps) {
   const cookieStore = cookies();
   const supabase = createClient({ cookieStore });
 
@@ -39,10 +59,23 @@ async function OrderPage() {
     redirect("/sign-in");
   }
 
-  const { data, error } = await getClient().query(OrderPageQuery, {
-    first: 4,
+  const queryVars: {
+    first: number;
+    userId: string;
+    after?: string | null;
+  } = {
+    first: 5,
     userId: user.id,
-  });
+  };
+
+  if (searchParams.after) {
+    queryVars.after = searchParams.after;
+  }
+
+  const { data } = await getServiceClient().query(
+    OrderPageQuery,
+    queryVars as any,
+  );
 
   if (!data) return notFound();
 
@@ -50,9 +83,12 @@ async function OrderPage() {
     <Shell layout="narrow" className="max-w-screen-2xl mx-auto">
       <h1 className="pb-8 text-3xl font-semibold border-b">Órdenes</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-x-5">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <section className="col-span-1 md:col-span-9">
-          <OrdersList orders={data.ordersCollection.edges} />
+          <OrdersList
+            orders={data.ordersCollection.edges}
+            pageInfo={data.ordersCollection.pageInfo}
+          />
         </section>
 
         <section className="col-span-1 md:col-span-3">

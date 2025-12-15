@@ -30,30 +30,30 @@ export const BuyAgainCardFragment = gql(/* GraphQL */ `
 function BuyAgainCard({ products }: BuyAgainCardProps) {
   return (
     <Card>
-      <CardHeader className="px-6 py-3 flex flex-row justify-between items-center bg-zinc-100">
-        <h2 className="text-lg">Buy again</h2>
+      <CardHeader className="px-6 py-3 flex flex-row justify-between items-center bg-zinc-100 rounded-t-md">
+        <h2 className="text-lg font-semibold text-primary">Comprar de nuevo</h2>
       </CardHeader>
       <CardContent className="flex flex-col gap-y-5 py-5">
         {products.map(({ node }) => (
-          <div key={node.id} className="grid grid-cols-5">
-            <div className="relative col-span-2">
+          <div key={node.id} className="flex gap-5">
+            <div className="relative w-[80px] h-[80px]">
               <Image
+                width={120}
+                height={120}
                 src={keytoUrl(node.featuredImage.key)}
                 alt={node.featuredImage.alt}
-                className="w-[80px] h-[80px] object-cover"
-                width={80}
-                height={80}
+                className="object-cover w-[80px] h-[80px] rounded-md"
               />
             </div>
 
-            <div className="col-span-3 ">
+            <div className="flex flex-col gap-2">
               <Link
                 href={"/shop/" + node.slug}
-                className="text-blue-500 line-clamp-3"
+                className="text-primary-800 line-clamp-2"
               >
                 {node.name}
               </Link>
-              <Link href={node.slug} className="text-red-700">
+              <Link href={"/shop/" + node.slug} className="font-bold">
                 <p>${node.price}</p>
               </Link>
             </div>

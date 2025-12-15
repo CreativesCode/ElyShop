@@ -1,57 +1,279 @@
 import { Shell } from "@/components/layouts/Shell";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { OrderProgress } from "@/features/orders";
+import { getOrderStatusInfo } from "@/features/orders/utils/orderStatus";
+import { formatOrderNumber } from "@/features/orders/utils/whatsapp";
+import db from "@/lib/supabase/db";
+import {
+  OrderStatus,
+  inventoryReservations,
+  medias,
+  orderLines,
+  orders,
+  products,
+} from "@/lib/supabase/schema";
+import { createClient } from "@/lib/supabase/server";
+import { cn, formatPrice, keytoUrl } from "@/lib/utils";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
 
 type TrackOrderProps = {
   params: { orderId: string };
 };
 
-function TrackOrderPage({ params: { orderId } }: TrackOrderProps) {
+async function TrackOrderPage({ params: { orderId } }: TrackOrderProps) {
+  // Verificar autenticación del usuario
+  const cookieStore = cookies();
+  const supabase = createClient({ cookieStore });
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    redirect("/sign-in");
+  }
+
+  // Obtener orden desde la base de datos
+  const order = await db.query.orders.findFirst({
+    where: eq(orders.id, orderId),
+  });
+
+  if (!order) {
+    return notFound();
+  }
+
+  // Verificar que la orden pertenezca al usuario autenticado
+  if (order.user_id && order.user_id !== user.id) {
+    return notFound();
+  }
+
+  // Obtener líneas de la orden con productos y medias
+  const items = await db
+    .select({
+      id: orderLines.id,
+      quantity: orderLines.quantity,
+      price: orderLines.price,
+      product: {
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        price: products.price,
+      },
+      media: {
+        id: medias.id,
+        key: medias.key,
+        alt: medias.alt,
+      },
+    })
+    .from(orderLines)
+    .leftJoin(products, eq(orderLines.productId, products.id))
+    .leftJoin(medias, eq(products.featuredImageId, medias.id))
+    .where(eq(orderLines.orderId, order.id));
+
+  // Obtener reservas de inventario (para color, size, material)
+  const reservations = await db
+    .select()
+    .from(inventoryReservations)
+    .where(eq(inventoryReservations.orderId, order.id));
+
+  const orderNumber = formatOrderNumber(order.id);
+  const customerData = order.customer_data as any;
+  const orderStatus = (order.order_status ||
+    "pending_confirmation") as OrderStatus;
+  const statusInfo = getOrderStatusInfo(orderStatus);
+  const StatusIcon = statusInfo?.icon;
+
   return (
-    <Shell layout="narrow" className="max-w-screen-2xl mx-auto">
-      <h2 className="text-xl font-semibold">Arrive at Tomorrow 22:00 </h2>
-      <div>
-        <p>
-          <span className="font-semibold">Order Status:</span>
-          Ordered
-        </p>
+    <Shell className="max-w-screen-2xl mx-auto">
+      <div className="space-y-6">
+        {/* Header con estado */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Orden {orderNumber}</h1>
+            <p className="text-muted-foreground mt-1">
+              Creada el{" "}
+              {new Date(order.createdAt).toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+          {statusInfo && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-base w-fit rounded-md",
+                statusInfo.color,
+                statusInfo.bgColor,
+                statusInfo.borderColor,
+              )}
+            >
+              {StatusIcon && <StatusIcon className="h-5 w-5" />}
+              <span className="font-medium">{statusInfo.label}</span>
+            </Badge>
+          )}
+        </div>
 
-        <p>
-          <span className="font-semibold">{`Order Id: `}</span>
-          {`#${orderId}`}
-        </p>
-        <OrderProgress />
+        {/* Progress bar */}
+        {statusInfo && <OrderProgress status={orderStatus} />}
+
+        {/* Productos */}
+        <Card>
+          <CardHeader className="font-semibold text-lg">
+            Productos de la Orden
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {items.map((item) => {
+              const reservation = reservations.find(
+                (r) => r.productId === item.product?.id,
+              );
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0"
+                >
+                  {item.media && (
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                      <Image
+                        src={keytoUrl(item.media.key)}
+                        alt={item.media.alt}
+                        width={96}
+                        height={96}
+                        className="object-cover w-24 h-24 rounded-md"
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <Link
+                        href={`/shop/${item.product?.slug}`}
+                        className="font-medium hover:underline text-blue-600"
+                      >
+                        {item.product?.name}
+                      </Link>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Cantidad: {item.quantity} × {formatPrice(item.price)}
+                      </p>
+                    </div>
+                    {reservation && (
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        {reservation.color && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-muted-foreground">
+                              Color:
+                            </span>
+                            <div
+                              className="h-4 w-4 rounded-full border"
+                              style={{ backgroundColor: reservation.color }}
+                            />
+                          </div>
+                        )}
+                        {reservation.size && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Tamaño:
+                            </span>{" "}
+                            <span className="font-medium">
+                              {reservation.size}
+                            </span>
+                          </div>
+                        )}
+                        {reservation.material && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Material:
+                            </span>{" "}
+                            <span className="font-medium">
+                              {reservation.material}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold">
+                      {formatPrice(Number(item.price) * item.quantity)}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Información adicional */}
+        <div className="grid gap-5 md:grid-cols-3">
+          <Card>
+            <CardHeader className="font-semibold">
+              Información de Envío
+            </CardHeader>
+            <CardContent className="space-y-1">
+              {customerData?.name && (
+                <p className="font-medium">{customerData.name}</p>
+              )}
+              {customerData?.phone && (
+                <p className="text-sm">{customerData.phone}</p>
+              )}
+              {customerData?.zone && (
+                <p className="text-sm text-muted-foreground">
+                  Zona: {customerData.zone}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="font-semibold">Resumen de Pago</CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal:</span>
+                <span>{formatPrice(order.amount)}</span>
+              </div>
+              {order.shipping_cost && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Envío:</span>
+                  <span>{formatPrice(order.shipping_cost)}</span>
+                </div>
+              )}
+              <div className="flex justify-between font-semibold pt-2 border-t">
+                <span>Total:</span>
+                <span>
+                  {formatPrice(
+                    Number(order.amount) + Number(order.shipping_cost || 0),
+                  )}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="font-semibold">Estado de Pago</CardHeader>
+            <CardContent>
+              <Badge
+                variant={
+                  order.payment_status === "paid" ? "default" : "secondary"
+                }
+                className="text-sm"
+              >
+                {order.payment_status === "paid" ? "Pagado" : "Pendiente"}
+              </Badge>
+              {order.payment_method && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Método: {order.payment_method}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      <section className="grid grid-cols-3 gap-x-5">
-        <Card>
-          <CardHeader className="font-semibold">Shipping Address</CardHeader>
-          <CardContent>
-            <p>Hugo Lam</p>
-            <p>4242 ORrder 122</p>
-            <p>Vancourver 332 212</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="font-semibold">Track your Order</CardHeader>
-          <CardContent>
-            <Link href="/" className="text-blue-700 hover:underline">
-              #{orderId}
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="font-semibold">Track your Order</CardHeader>
-          <CardContent>
-            <Link href="/" className="text-blue-700 hover:underline">
-              #{orderId}
-            </Link>
-          </CardContent>
-        </Card>
-      </section>
     </Shell>
   );
 }

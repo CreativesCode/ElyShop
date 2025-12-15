@@ -2387,6 +2387,7 @@ export type GetChildCollectionsQueryQuery = {
 export type OrderPageQueryQueryVariables = Exact<{
   first: Scalars["Int"];
   userId?: InputMaybe<Scalars["UUID"]>;
+  after?: InputMaybe<Scalars["Cursor"]>;
 }>;
 
 export type OrderPageQueryQuery = {
@@ -2408,6 +2409,7 @@ export type OrderPageQueryQuery = {
             node: {
               __typename?: "order_lines";
               id: string;
+              quantity: number;
               products?: {
                 __typename?: "products";
                 id: string;
@@ -2426,8 +2428,30 @@ export type OrderPageQueryQuery = {
             };
           }>;
         } | null;
+        inventory_reservationsCollection?: {
+          __typename?: "inventory_reservationsConnection";
+          edges: Array<{
+            __typename?: "inventory_reservationsEdge";
+            node: {
+              __typename?: "inventory_reservations";
+              id: string;
+              product_id: string;
+              color?: string | null;
+              size?: string | null;
+              material?: string | null;
+              quantity: number;
+            };
+          }>;
+        } | null;
       };
     }>;
+    pageInfo: {
+      __typename?: "PageInfo";
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      endCursor?: string | null;
+      startCursor?: string | null;
+    };
   } | null;
   productsCollection?: {
     __typename?: "productsConnection";
@@ -3115,6 +3139,7 @@ export type OrdersListFragmentFragment = {
         node: {
           __typename?: "order_lines";
           id: string;
+          quantity: number;
           products?: {
             __typename?: "products";
             id: string;
@@ -3130,6 +3155,21 @@ export type OrdersListFragmentFragment = {
               alt: string;
             } | null;
           } | null;
+        };
+      }>;
+    } | null;
+    inventory_reservationsCollection?: {
+      __typename?: "inventory_reservationsConnection";
+      edges: Array<{
+        __typename?: "inventory_reservationsEdge";
+        node: {
+          __typename?: "inventory_reservations";
+          id: string;
+          product_id: string;
+          color?: string | null;
+          size?: string | null;
+          material?: string | null;
+          quantity: number;
         };
       }>;
     } | null;
@@ -3926,6 +3966,10 @@ export const OrdersListFragmentFragmentDoc = {
                                   },
                                   {
                                     kind: "Field",
+                                    name: { kind: "Name", value: "quantity" },
+                                  },
+                                  {
+                                    kind: "Field",
                                     name: { kind: "Name", value: "products" },
                                     selectionSet: {
                                       kind: "SelectionSet",
@@ -4002,6 +4046,60 @@ export const OrdersListFragmentFragmentDoc = {
                                         },
                                       ],
                                     },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: {
+                    kind: "Name",
+                    value: "inventory_reservationsCollection",
+                  },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "edges" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "node" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "product_id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "color" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "size" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "material" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "quantity" },
                                   },
                                 ],
                               },
@@ -5457,6 +5555,14 @@ export const OrderPageQueryDocument = {
           },
           type: { kind: "NamedType", name: { kind: "Name", value: "UUID" } },
         },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "after" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Cursor" } },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -5471,6 +5577,14 @@ export const OrderPageQueryDocument = {
                 value: {
                   kind: "Variable",
                   name: { kind: "Name", value: "first" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "after" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "after" },
                 },
               },
               {
@@ -5532,6 +5646,31 @@ export const OrderPageQueryDocument = {
                       {
                         kind: "FragmentSpread",
                         name: { kind: "Name", value: "OrdersListFragment" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "pageInfo" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hasNextPage" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hasPreviousPage" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "endCursor" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "startCursor" },
                       },
                     ],
                   },
@@ -5619,6 +5758,10 @@ export const OrderPageQueryDocument = {
                                   },
                                   {
                                     kind: "Field",
+                                    name: { kind: "Name", value: "quantity" },
+                                  },
+                                  {
+                                    kind: "Field",
                                     name: { kind: "Name", value: "products" },
                                     selectionSet: {
                                       kind: "SelectionSet",
@@ -5695,6 +5838,60 @@ export const OrderPageQueryDocument = {
                                         },
                                       ],
                                     },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: {
+                    kind: "Name",
+                    value: "inventory_reservationsCollection",
+                  },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "edges" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "node" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "product_id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "color" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "size" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "material" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "quantity" },
                                   },
                                 ],
                               },

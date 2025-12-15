@@ -160,8 +160,8 @@ function HeroSection() {
         />
       </div>
 
-      <div className="container absolute py-8 h-[400px] md:h-[800px] w-full">
-        <div className="flex flex-col justify-center z-30 h-full max-w-screen-2xl mx-auto">
+      <div className="max-w-screen-2xl mx-auto absolute py-8 h-[400px] md:h-[800px] w-full">
+        <div className="flex flex-col justify-center z-30 h-full container">
           <p className="text-sm md:text-md uppercase tracking-widest text-white ">
             {siteConfig.name}
           </p>
