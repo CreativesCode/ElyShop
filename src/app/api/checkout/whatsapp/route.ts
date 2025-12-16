@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         .insert(orders)
         .values({
           user_id: user?.id || null,
-          currency: "usd",
+          currency: "cup",
           amount: totalAmount.toString(),
           order_status: "pending_confirmation",
           payment_status: "unpaid",

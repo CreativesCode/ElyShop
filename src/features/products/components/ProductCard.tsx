@@ -188,20 +188,22 @@ export function ProductCard({
             </Link>
           </CardTitle>
 
-          <div className="flex md:justify-between flex-col md:flex-row">
+          <div
+            className={`flex md:justify-between flex-col ${hasDiscount ? "" : "md:flex-row"}`}
+          >
             <div className="flex items-center gap-2">
               {hasDiscount ? (
                 <>
-                  <span className="text-lg font-bold text-red-600">
-                    ${discountedPrice.toFixed(2)}
+                  <span className="text-md font-bold text-red-600">
+                    {discountedPrice.toFixed(2)} CUP
                   </span>
-                  <span className="text-sm text-gray-500 line-through">
-                    ${priceValue.toFixed(2)}
+                  <span className="text-xs text-gray-500 line-through">
+                    {priceValue.toFixed(2)} CUP
                   </span>
                 </>
               ) : (
                 <span className="text-lg font-bold">
-                  ${priceValue.toFixed(2)}
+                  {priceValue.toFixed(2)} CUP
                 </span>
               )}
             </div>

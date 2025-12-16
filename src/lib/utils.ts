@@ -29,7 +29,7 @@ export const keytoUrl = (key?: string) => {
 export function formatPrice(price: number | string) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "CUP",
   }).format(Number(price));
 }
 

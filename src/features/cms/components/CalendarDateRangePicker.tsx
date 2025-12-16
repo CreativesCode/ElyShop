@@ -1,26 +1,72 @@
 "use client";
 
+import { format, isValid, parseISO, startOfMonth } from "date-fns";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
-import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils";
+import { Icons } from "@/components/layouts/icons";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/layouts/icons";
-import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export function CalendarDateRangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const fromParam = searchParams.get("from");
+  const toParam = searchParams.get("to");
+
+  const parsedFrom = fromParam ? parseISO(fromParam) : null;
+  const parsedTo = toParam ? parseISO(toParam) : null;
+
+  const initialFrom = parsedFrom && isValid(parsedFrom) ? parsedFrom : null;
+  const initialTo = parsedTo && isValid(parsedTo) ? parsedTo : null;
+
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20),
+    from: initialFrom ?? startOfMonth(new Date()),
+    to: initialTo ?? new Date(),
   });
+
+  // Si el usuario navega/cambia query params, sincroniza el estado local
+  React.useEffect(() => {
+    const nextFrom = initialFrom ?? startOfMonth(new Date());
+    const nextTo = initialTo ?? new Date();
+    setDate({ from: nextFrom, to: nextTo });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromParam, toParam]);
+
+  const onSelect = React.useCallback(
+    (next: DateRange | undefined) => {
+      setDate(next);
+
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (next?.from) {
+        params.set("from", format(next.from, "yyyy-MM-dd"));
+      } else {
+        params.delete("from");
+      }
+
+      if (next?.to) {
+        params.set("to", format(next.to, "yyyy-MM-dd"));
+      } else {
+        params.delete("to");
+      }
+
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -55,7 +101,7 @@ export function CalendarDateRangePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={onSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

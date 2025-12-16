@@ -36,16 +36,16 @@ export function generateWhatsAppMessage(data: WhatsAppMessageData): string {
       .filter(Boolean)
       .join(", ");
     const variantText = variant ? ` (${variant})` : "";
-    message += `• ${item.name}${variantText} x${item.quantity} — $${item.price.toFixed(2)}\n`;
+    message += `• ${item.name}${variantText} x${item.quantity} — ${item.price.toFixed(2)} CUP\n`;
   });
 
   // Subtotal
-  message += `\n*Subtotal:* $${subtotal.toFixed(2)}`;
+  message += `\n*Subtotal:* ${subtotal.toFixed(2)} CUP`;
 
   // Shipping (si está definido)
   if (shippingCost !== undefined && shippingCost > 0) {
-    message += `\n*Envío:* $${shippingCost.toFixed(2)}`;
-    message += `\n*Total:* $${(subtotal + shippingCost).toFixed(2)}`;
+    message += `\n*Envío:* ${shippingCost.toFixed(2)} CUP`;
+    message += `\n*Total:* ${(subtotal + shippingCost).toFixed(2)} CUP`;
   }
 
   // Información del cliente

@@ -107,17 +107,19 @@ async function ProductDetailPage({ params }: Props) {
                 {hasDiscount ? (
                   <>
                     <p className="text-3xl font-bold text-red-600">
-                      ${discountedPrice.toFixed(2)}
+                      {discountedPrice.toFixed(2)} CUP
                     </p>
                     <p className="text-xl text-gray-500 line-through">
-                      ${priceValue.toFixed(2)}
+                      {priceValue.toFixed(2)} CUP
                     </p>
                     <span className="bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
                       -{discountValue}%
                     </span>
                   </>
                 ) : (
-                  <p className="text-3xl font-bold">${priceValue.toFixed(2)}</p>
+                  <p className="text-3xl font-bold">
+                    {priceValue.toFixed(2)} CUP
+                  </p>
                 )}
               </div>
             </div>

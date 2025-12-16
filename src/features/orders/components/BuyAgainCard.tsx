@@ -68,14 +68,14 @@ function BuyAgainCard({ products }: BuyAgainCardProps) {
                   {hasDiscount ? (
                     <>
                       <p className="font-bold text-red-600">
-                        ${discountedPrice.toFixed(2)}
+                        {discountedPrice.toFixed(2)} CUP
                       </p>
                       <p className="text-sm text-gray-500 line-through">
-                        ${priceValue.toFixed(2)}
+                        {priceValue.toFixed(2)} CUP
                       </p>
                     </>
                   ) : (
-                    <p className="font-bold">${priceValue.toFixed(2)}</p>
+                    <p className="font-bold">{priceValue.toFixed(2)} CUP</p>
                   )}
                 </div>
               </div>

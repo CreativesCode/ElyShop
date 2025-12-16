@@ -119,7 +119,7 @@ export async function POST(request: Request) {
         .values({
           // En admin no asociamos la orden al usuario admin
           user_id: null,
-          currency: "usd",
+          currency: "cup",
           amount: totalAmount.toString(),
           order_status: "pending_confirmation",
           payment_status: "unpaid",

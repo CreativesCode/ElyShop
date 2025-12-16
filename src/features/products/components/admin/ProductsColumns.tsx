@@ -122,7 +122,7 @@ const ProductsColumns: ColumnDef<{
       const product = row.original.node;
 
       return (
-        <div className="font-medium text-xs sm:text-base">{`$ ${product.price}`}</div>
+        <div className="font-medium text-xs sm:text-base">{`${product.price} CUP`}</div>
       );
     },
   },

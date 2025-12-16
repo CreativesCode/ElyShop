@@ -40,7 +40,7 @@ function FilterBadges({
       )}
       {query.priceRange && (
         <Badge className="px-3 py-2 gap-x-3">
-          {`Price Range: $${query.priceRange[0]} - $${query.priceRange[1]}`}
+          {`Price Range: ${query.priceRange[0]} - ${query.priceRange[1]} CUP`}
           <button
             onClick={() =>
               router.push(pathname + "?" + onDeleteHandler("price_range"))
