@@ -1,8 +1,21 @@
 "use client";
 import { OrderByDirection, SearchQueryVariables } from "@/gql/graphql";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchResultPage from "./SearchResultPage";
+
+const DEFAULT_PRICE_RANGE: [number, number] = [0, 10000];
+
+function parsePriceRangeParam(param: string | null): [number, number] {
+  if (!param) return DEFAULT_PRICE_RANGE;
+  const parts = param.split("-");
+  if (parts.length !== 2) return DEFAULT_PRICE_RANGE;
+  const min = Number(parts[0]?.trim());
+  const max = Number(parts[1]?.trim());
+  if (!Number.isFinite(min) || !Number.isFinite(max))
+    return DEFAULT_PRICE_RANGE;
+  return min <= max ? [min, max] : [max, min];
+}
 
 interface SearchProductsInifiteScrollProps {
   collectionId?: string;
@@ -13,32 +26,54 @@ function SearchProductsInifiteScroll({
   collectionId,
   collectionIds,
 }: SearchProductsInifiteScrollProps) {
-  const searchParmas = useSearchParams();
-  const varaibles = searchParamsVariablesFactory(
-    searchParmas,
-    collectionId,
-    collectionIds,
+  const searchParams = useSearchParams();
+
+  // `useSearchParams()` can keep the same object reference between navigations.
+  // Using a string key guarantees we react to actual param changes.
+  const searchParamsKey = searchParams.toString();
+
+  const collectionIdsKey = useMemo(
+    () =>
+      collectionIds && collectionIds.length > 0 ? collectionIds.join(",") : "",
+    [collectionIds],
   );
 
-  const [pageVariables, setPageVariables] = useState([varaibles]);
+  const baseVariables = useMemo(
+    () =>
+      searchParamsVariablesFactory(searchParams, collectionId, collectionIds),
+    [searchParamsKey, collectionId, collectionIdsKey],
+  );
+
+  const baseVariablesKey = useMemo(
+    () => JSON.stringify(baseVariables),
+    [baseVariables],
+  );
+
+  // Keep pages as cursors; variables are derived from current filters.
+  const [cursors, setCursors] = useState<Array<string | undefined>>([
+    undefined,
+  ]);
 
   useEffect(() => {
-    setPageVariables([
-      searchParamsVariablesFactory(searchParmas, collectionId, collectionIds),
-    ]);
-  }, [searchParmas, collectionId, collectionIds]);
+    // Reset paging when filters/search params change.
+    setCursors([undefined]);
+  }, [baseVariablesKey]);
 
   const loadMoreHandler = (after: string) => {
-    setPageVariables([...pageVariables, { ...varaibles, after, first: 8 }]);
+    setCursors((prev) => [...prev, after]);
   };
 
   return (
     <section>
-      {pageVariables.map((variable, i) => (
+      {cursors.map((after, i) => (
         <SearchResultPage
-          key={"" + variable.after}
-          variables={variable}
-          isLastPage={i === pageVariables.length - 1}
+          key={`${i}:${after ?? "first"}`}
+          variables={{
+            ...baseVariables,
+            after,
+            first: i === 0 ? 4 : 8,
+          }}
+          isLastPage={i === cursors.length - 1}
           onLoadMore={loadMoreHandler}
         />
       ))}
@@ -53,8 +88,9 @@ const searchParamsVariablesFactory = (
   collectionId?: string,
   collectionIds?: string[],
 ) => {
-  const priceRange = searchParams.get("price_range");
-  const range = priceRange ? priceRange.split("-") : undefined;
+  const [minPrice, maxPrice] = parsePriceRangeParam(
+    searchParams.get("price_range"),
+  );
   const collections =
     (JSON.parse(searchParams.get("collections") || "null") as string[]) ?? [];
   const sort = searchParams.get("sort") ?? undefined;
@@ -86,11 +122,11 @@ const searchParamsVariablesFactory = (
       orderBy = undefined;
   }
 
-  console.log("collections", collections);
   const varaibles: SearchQueryVariables = {
     search: search ? `%${search.trim()}%` : "%%",
-    lower: range && range[0] ? `${range[0]}` : undefined,
-    upper: range && range[1] ? `${range[1]}` : undefined,
+    // Backend expects BigFloat inputs as string values.
+    lower: String(minPrice),
+    upper: String(maxPrice),
     collections:
       collectionIds && collectionIds.length > 0
         ? collectionIds

@@ -34,6 +34,20 @@ type Props = {
   shopLayout?: boolean;
 };
 
+const DEFAULT_PRICE_RANGE: [number, number] = [0, 10000];
+
+function parsePriceRangeParam(
+  param: string | null,
+): [number, number] | undefined {
+  if (!param) return undefined;
+  const parts = param.split("-");
+  if (parts.length !== 2) return undefined;
+  const min = Number(parts[0]?.trim());
+  const max = Number(parts[1]?.trim());
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return undefined;
+  return min <= max ? [min, max] : [max, min];
+}
+
 function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -47,8 +61,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const priceRange = searchParams.get("price_range");
-    const range = priceRange ? priceRange.split("-") : undefined;
+    const range = parsePriceRangeParam(searchParams.get("price_range"));
 
     const collections =
       (JSON.parse(searchParams.get("collections")) as string[]) ?? [];
@@ -57,10 +70,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
 
     setQuery({
       sort: sort ? SortEnum[sort] : undefined,
-      priceRange:
-        range && range.length === 2
-          ? [parseInt(range[0]), parseInt(range[1])]
-          : undefined,
+      priceRange: range,
       collections,
       search,
     });
@@ -73,7 +83,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
 
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   const removeQueryString = useCallback(
@@ -83,23 +93,36 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
       value ? params.set(name, value) : params.delete(name);
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
-  const debouncedPrice = useDebounce(query.priceRange ?? [0, 10000], 500);
+  const debouncedPrice = useDebounce(
+    query.priceRange ?? DEFAULT_PRICE_RANGE,
+    500,
+  );
 
   React.useEffect(() => {
     const [min, max] = debouncedPrice;
-    if (
-      query.priceRange !== undefined &&
-      !(query.priceRange[0] === 0 && query.priceRange[1] === 10000)
-    )
-      startTransition(() => {
-        router.push(
-          `${pathname}?${createQueryString("price_range", `${min}-${max}`)}`
-        );
-      });
-  }, [debouncedPrice]);
+    startTransition(() => {
+      const isDefault =
+        min === DEFAULT_PRICE_RANGE[0] && max === DEFAULT_PRICE_RANGE[1];
+      const shouldRemove = query.priceRange === undefined || isDefault;
+
+      const qs = shouldRemove
+        ? removeQueryString("price_range")
+        : createQueryString("price_range", `${min}-${max}`);
+
+      router.push(qs ? `${pathname}?${qs}` : pathname);
+    });
+  }, [
+    debouncedPrice,
+    pathname,
+    router,
+    startTransition,
+    createQueryString,
+    removeQueryString,
+    query.priceRange,
+  ]);
 
   const collectionChangeHandler = (collectionId: string) => {
     const oldValue = query.collections ?? [];
@@ -110,7 +133,7 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
       router.push(
         pathname +
           "?" +
-          createQueryString("collections", JSON.stringify(collections))
+          createQueryString("collections", JSON.stringify(collections)),
       );
     } else {
       const collections = [...oldValue, collectionId];
@@ -120,8 +143,8 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
           "?" +
           removeQueryString(
             "collections",
-            collections.length > 0 ? JSON.stringify(collections) : undefined
-          )
+            collections.length > 0 ? JSON.stringify(collections) : undefined,
+          ),
       );
     }
   };
@@ -154,22 +177,30 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
                 label={"Rango de precios (CUP)"}
                 defaultValue={query.priceRange}
                 value={query.priceRange}
-                onMinChange={(data) =>
+                onMinChange={(data) => {
+                  const currentRange = query.priceRange ?? [0, 10000];
                   setQuery({
                     ...query,
-                    priceRange: [query.priceRange[0], data],
-                  })
-                }
-                onMaxChange={(data) =>
+                    priceRange: [data, currentRange[1]],
+                  });
+                }}
+                onMaxChange={(data) => {
+                  const currentRange = query.priceRange ?? [0, 10000];
                   setQuery({
                     ...query,
-                    priceRange: [data, query.priceRange[1]],
-                  })
-                }
+                    priceRange: [currentRange[0], data],
+                  });
+                }}
                 onValueChange={(priceRange) =>
                   setQuery({ ...query, priceRange })
                 }
-                onReset={() => setQuery({ ...query, priceRange: undefined })}
+                onReset={() => {
+                  setQuery({ ...query, priceRange: undefined });
+                  startTransition(() => {
+                    const qs = removeQueryString("price_range");
+                    router.push(qs ? `${pathname}?${qs}` : pathname);
+                  });
+                }}
               />
             </DropdownMenuContent>
           </DropdownMenu>
@@ -224,25 +255,27 @@ function FilterSelections({ collectionsSection, shopLayout = true }: Props) {
                   label={"Rango de precios"}
                   defaultValue={query.priceRange}
                   value={query.priceRange}
-                  onMinChange={(data) =>
+                  onMinChange={(data) => {
+                    const currentRange = query.priceRange ?? [0, 10000];
                     setQuery({
                       ...query,
-                      priceRange: [query.priceRange[0], data],
-                    })
-                  }
-                  onMaxChange={(data) =>
+                      priceRange: [data, currentRange[1]],
+                    });
+                  }}
+                  onMaxChange={(data) => {
+                    const currentRange = query.priceRange ?? [0, 10000];
                     setQuery({
                       ...query,
-                      priceRange: [data, query.priceRange[1]],
-                    })
-                  }
+                      priceRange: [currentRange[0], data],
+                    });
+                  }}
                   onValueChange={(priceRange) =>
                     setQuery({ ...query, priceRange })
                   }
                   onReset={() => {
                     setQuery({ ...query, priceRange: undefined });
                     router.push(
-                      pathname + "?" + removeQueryString("price_range")
+                      pathname + "?" + removeQueryString("price_range"),
                     );
                   }}
                 />
