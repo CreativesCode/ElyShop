@@ -59,7 +59,7 @@ function UpdateMediaForm({ media }: UpdateMediaFormProps) {
     console.log("Delete");
     router.push("/admin/medias");
     router.refresh();
-    toast({ title: "Image Deleted" });
+    toast({ title: "Imagen Eliminada" });
   };
 
   const onSubmit = handleSubmit(async (data: InsertMedia) => {
@@ -97,7 +97,7 @@ function UpdateMediaForm({ media }: UpdateMediaFormProps) {
             <FormControl>
               <Input
                 aria-invalid={!!form.formState.errors.alt}
-                placeholder="Media Alt."
+                placeholder="Alt de la imagen."
                 {...register("alt")}
               />
             </FormControl>
@@ -106,30 +106,32 @@ function UpdateMediaForm({ media }: UpdateMediaFormProps) {
         </div>
 
         <DisabledFormData
-          label={"Created At:"}
+          label={"Creado el:"}
           data={media.createdAt.toString()}
         />
         <DisabledFormData
-          label={"Updated At:"}
+          label={"Actualizado el:"}
           data={media.updatedAt.toString()}
         />
 
         <AlertDialog>
           <AlertDialogTrigger className="text-red-600 text-left">
-            Delete Permanently
+            Eliminar permanentemente
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>
+                ¿Estás seguro de querer eliminar la imagen permanentemente?
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Esta acción no puede ser deshecha. Esta acción eliminará la
+                imagen permanentemente.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
               <AlertDialogAction onClick={deleteHandler}>
-                Delete
+                Eliminar
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -137,7 +139,7 @@ function UpdateMediaForm({ media }: UpdateMediaFormProps) {
 
         <div className="py-8 flex gap-x-5 items-center">
           <Button disabled={isPending} variant={"outline"} form="project-form">
-            {media ? "Update" : "Create"}
+            {media ? "Actualizar" : "Crear"}
             {isPending && (
               <Spinner
                 className="mr-2 h-4 w-4 animate-spin"
@@ -146,7 +148,7 @@ function UpdateMediaForm({ media }: UpdateMediaFormProps) {
             )}
           </Button>
           <Link href="/admin/medias" className={buttonVariants()}>
-            Cancel
+            Cancelar
           </Link>
         </div>
       </form>

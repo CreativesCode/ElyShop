@@ -110,7 +110,7 @@ function UploadMediaContainer({
                       setLastCursor(medias.pageInfo.endCursor ?? undefined);
                     }}
                   >
-                    Load more.
+                    Cargar más.
                   </Button>
                 </div>
               ) : null}
@@ -118,7 +118,7 @@ function UploadMediaContainer({
               <input {...getInputProps()} />
               {isDragActive ? (
                 <div className="w-full h-full min-h-[320px] flex items-center justify-center z-50">
-                  Drop the Image here to upload the image.
+                  Arrastre la imagen aquí para subir la imagen.
                 </div>
               ) : null}
             </div>

@@ -38,14 +38,14 @@ const OrdersColumns: ColumnDef<{
 }>[] = [
   {
     accessorKey: "label",
-    header: () => <div className="text-left capitalize">Order Number</div>,
+    header: () => <div className="text-left capitalize">Número</div>,
     cell: ({ row }) => {
       const order = row.original.node;
 
       return (
         <Link
           href={`/admin/orders/${order.id}`}
-          className="text-center font-medium capitalize px-3 hover:underline"
+          className="text-center font-medium capitalize hover:underline"
         >
           {formatOrderNumber(order.id)}
         </Link>
@@ -54,7 +54,7 @@ const OrdersColumns: ColumnDef<{
   },
   {
     accessorKey: "order_status",
-    header: () => <div className="">Order Status</div>,
+    header: () => <div className="">Estado</div>,
     cell: ({ row }) => {
       const order = row.original.node;
       const status = order.order_status as OrderStatus;
@@ -68,7 +68,10 @@ const OrdersColumns: ColumnDef<{
 
       if (!statusInfo) {
         return (
-          <Badge variant="outline" className="text-muted-foreground">
+          <Badge
+            variant="outline"
+            className="rounded-md px-2 py-1 text-muted-foreground"
+          >
             {status}
           </Badge>
         );
@@ -80,6 +83,7 @@ const OrdersColumns: ColumnDef<{
         <Badge
           variant="outline"
           className={cn(
+            "rounded-md px-2 py-1",
             "font-medium flex items-center gap-2 w-fit",
             statusInfo.color,
             statusInfo.borderColor,
@@ -93,7 +97,7 @@ const OrdersColumns: ColumnDef<{
   },
   {
     accessorKey: "payment_status",
-    header: () => <div className="text-left capitalize">Payment Status</div>,
+    header: () => <div className="text-left capitalize">Estado de Pago</div>,
     cell: ({ row }) => {
       const order = row.original.node;
 
@@ -109,6 +113,7 @@ const OrdersColumns: ColumnDef<{
           <Badge
             variant="outline"
             className={cn(
+              "rounded-md px-2 py-1",
               order.payment_status == "unpaid"
                 ? "text-red-500 border-red-500"
                 : "text-green-500 border-green-500",
@@ -122,7 +127,7 @@ const OrdersColumns: ColumnDef<{
   },
   {
     id: "actions",
-    header: () => <div className="text-center capitalize">Actions</div>,
+    header: () => <div className="text-center capitalize">Acc</div>,
     cell: ({ row }) => {
       const order = row.original.node;
 
@@ -130,7 +135,7 @@ const OrdersColumns: ColumnDef<{
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir menú</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -138,13 +143,13 @@ const OrdersColumns: ColumnDef<{
             align="start"
             className="flex flex-col items-start"
           >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
             <Link
               href={`/admin/orders/${order.id}`}
               className={buttonVariants({ variant: "ghost" })}
             >
-              Edit Orders
+              Editar Ordenes
             </Link>
             {/* <DeleteCategoryDialog categoryId={category.id} /> */}
           </DropdownMenuContent>

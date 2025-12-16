@@ -7,7 +7,7 @@ function AdminUserNav() {
   return (
     <section className="flex justify-end mb-3">
       <Link className={cn(buttonVariants())} href="/admin/users/new">
-        Create New User
+        Crear Nuevo Usuario
       </Link>
     </section>
   );

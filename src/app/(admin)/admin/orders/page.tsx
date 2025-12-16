@@ -1,12 +1,10 @@
 import AdminShell from "@/components/admin/AdminShell";
-import { buttonVariants } from "@/components/ui/button";
-import { DataTable } from "@/features/cms";
-import { OrdersColumns } from "@/features/orders";
+import { DataTableSkeleton } from "@/features/cms";
+import { OrdersColumns, OrdersDataTable } from "@/features/orders";
 import { gql } from "@/gql";
 import { getClient } from "@/lib/urql";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 type AdminOrdersPageProps = {
   searchParams: {
@@ -28,26 +26,28 @@ const AdminOrdersPageQuery = gql(/* GraphQL */ `
   }
 `);
 
-async function OrdersPage({ searchParams }: AdminOrdersPageProps) {
+async function OrdersPage({}: AdminOrdersPageProps) {
   const { data } = await getClient().query(AdminOrdersPageQuery, {});
 
   if (!data) return notFound();
 
   return (
     <AdminShell
-      heading="Orders"
-      description={"Edit orders from the dashboard. "}
+      heading="Órdenes"
+      description={"Edite las órdenes desde el dashboard. "}
     >
-      <section className="flex justify-end items-center pb-5 w-full">
-        <Link href="/admin/collections/new" className={cn(buttonVariants())}>
-          New Order
+      {/* <section className="flex justify-end items-center pb-5 w-full">
+        <Link href="/admin/orders/new" className={cn(buttonVariants())}>
+          Nueva Orden
         </Link>
-      </section>
+      </section> */}
 
-      <DataTable
-        columns={OrdersColumns}
-        data={data.ordersCollection.edges || []}
-      />
+      <Suspense fallback={<DataTableSkeleton />}>
+        <OrdersDataTable
+          columns={OrdersColumns}
+          data={data.ordersCollection.edges || []}
+        />
+      </Suspense>
     </AdminShell>
   );
 }

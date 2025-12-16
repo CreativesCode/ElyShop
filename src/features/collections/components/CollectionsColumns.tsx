@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import DeleteDialog from "@/components/ui/deleteDialog";
 import { DocumentType, gql } from "@/gql";
 import {
   DropdownMenu,
@@ -35,14 +34,14 @@ const CollectionsColumns: ColumnDef<{
 }>[] = [
   {
     accessorKey: "label",
-    header: () => <div className="text-left capitalize">Label</div>,
+    header: () => <div className="text-left capitalize">Etiqueta</div>,
     cell: ({ row }) => {
       const collection = row.original.node;
 
       return (
         <Link
           href={`/admin/collections/${collection.id}`}
-          className="text-center font-medium capitalize px-3 hover:underline flex items-center gap-2"
+          className="text-left font-medium capitalize hover:underline flex items-center gap-2"
         >
           {collection.label}
           {collection.show_in_home && (
@@ -68,12 +67,12 @@ const CollectionsColumns: ColumnDef<{
   },
   {
     accessorKey: "title",
-    header: () => <div className="text-left capitalize">Title</div>,
+    header: () => <div className="text-left capitalize">Título</div>,
     cell: ({ row }) => {
       const collection = row.original.node;
 
       return (
-        <p className="font-medium capitalize px-3 hover:underline">
+        <p className="font-medium capitalize hover:underline">
           {collection.title}
         </p>
       );
@@ -81,7 +80,7 @@ const CollectionsColumns: ColumnDef<{
   },
   {
     accessorKey: "parent",
-    header: () => <div className="text-left capitalize">Parent</div>,
+    header: () => <div className="text-left capitalize">Padre</div>,
     cell: ({ row }) => {
       const collection = row.original.node;
 
@@ -90,7 +89,7 @@ const CollectionsColumns: ColumnDef<{
           {collection.collections ? (
             <Link
               href={`/admin/collections/${collection.collections.id}`}
-              className="text-center font-medium capitalize px-3 hover:underline"
+              className="text-left font-medium capitalize hover:underline"
             >
               {collection.collections.label}
             </Link>
@@ -103,7 +102,7 @@ const CollectionsColumns: ColumnDef<{
   },
   {
     id: "actions",
-    header: () => <div className="text-center capitalize">Actions</div>,
+    header: () => <div className="text-center capitalize">Acc</div>,
     cell: ({ row }) => {
       const collection = row.original.node;
 
@@ -111,7 +110,7 @@ const CollectionsColumns: ColumnDef<{
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir menú</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -119,13 +118,13 @@ const CollectionsColumns: ColumnDef<{
             align="start"
             className="flex flex-col items-start"
           >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
             <Link
               href={`/admin/collections/${collection.id}`}
               className={buttonVariants({ variant: "ghost" })}
             >
-              Edit Collections
+              Editar Colecciones
             </Link>
             {/* <DeleteCollectionDialog collectionId={collection.id} /> */}
           </DropdownMenuContent>

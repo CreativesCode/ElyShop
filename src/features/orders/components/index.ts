@@ -7,3 +7,4 @@ export { default as OrderActionsButtons } from "./admin/OrderActionsButtons";
 export { default as OrderStatusChanger } from "./admin/OrderStatusChanger";
 export * from "./admin/OrdersColumns";
 export { default as OrdersColumns } from "./admin/OrdersColumns";
+export { default as OrdersDataTable } from "./admin/OrdersDataTable";

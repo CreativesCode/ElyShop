@@ -7,8 +7,8 @@ type Props = {};
 async function MediasPage({}: Props) {
   return (
     <AdminShell
-      heading="Medias"
-      description="You can add/edit the medias from the dashboard"
+      heading="Multimedias"
+      description="Puede agregar/editar las multimedias desde el dashboard"
     >
       <Suspense fallback={<ImageGridSkeleton />}>
         <MediasPageContent />

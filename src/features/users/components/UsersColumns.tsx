@@ -1,32 +1,31 @@
 "use client";
 
-import Link from "next/link";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import DeleteDialog from "@/components/ui/deleteDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
-import { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
+import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 const UsersColumns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
-    header: () => <div className="text-left capitalize">UserId</div>,
+    header: () => <div className="text-left capitalize">ID</div>,
     cell: ({ row }) => {
       const user = row.original;
 
       return (
         <Link
           href={`/admin/users/${user.id}`}
-          className="text-center font-medium capitalize px-3"
+          className="text-center font-medium capitalize"
         >
           {user.id}
         </Link>
@@ -35,7 +34,7 @@ const UsersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "name",
-    header: () => <div className="text-left capitalize">Name</div>,
+    header: () => <div className="text-left capitalize">Nombre</div>,
     cell: ({ row }) => {
       const user = row.original;
       return <p>{user.user_metadata.name || "-"}</p>;
@@ -46,12 +45,12 @@ const UsersColumns: ColumnDef<User>[] = [
     header: () => <div className="text-left capitalize">Email</div>,
     cell: ({ row }) => {
       const user = row.original;
-      return <p>{user.email}</p>;
+      return <p className="text-truncate sm:text-nowrap">{user.email}</p>;
     },
   },
   {
     accessorKey: "role",
-    header: () => <div className="text-left capitalize">Role</div>,
+    header: () => <div className="text-left capitalize">Rol</div>,
     cell: ({ row }) => {
       const user = row.original;
       return <p>{user.role}</p>;
@@ -60,7 +59,7 @@ const UsersColumns: ColumnDef<User>[] = [
 
   {
     id: "actions",
-    header: () => <div className="text-center capitalize">Actions</div>,
+    header: () => <div className="text-center capitalize">Acc</div>,
     cell: ({ row }) => {
       const user = row.original;
       const { toast } = useToast();
@@ -94,7 +93,7 @@ const UsersColumns: ColumnDef<User>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir menú</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -102,16 +101,16 @@ const UsersColumns: ColumnDef<User>[] = [
             align="start"
             className="flex flex-col items-start"
           >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
             <Link
               href={`/admin/products/${user.id}`}
               className={buttonVariants({ variant: "ghost" })}
             >
-              Edit User
+              Editar Usuario
             </Link>
             <Button onClick={() => promoteAdminHandler(user.id)}>
-              Promote to Admin
+              Promover a Admin
             </Button>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -119,18 +118,5 @@ const UsersColumns: ColumnDef<User>[] = [
     },
   },
 ];
-
-const DeleteCategoryDialog = ({ categoryId }: { categoryId: string }) => {
-  const onClickHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    // await deleteCategoryAction(categoryId)
-  };
-  return (
-    <DeleteDialog
-      onClickHandler={onClickHandler}
-      title="Delete Proejct"
-      actionLabel="Delete"
-    />
-  );
-};
 
 export default UsersColumns;

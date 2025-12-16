@@ -104,18 +104,18 @@ function ParentCollectionSelect({
     >
       <FormControl>
         <SelectTrigger>
-          <SelectValue placeholder="Select a parent collection (optional)" />
+          <SelectValue placeholder="Seleccione una colección padre (opcional)" />
         </SelectTrigger>
       </FormControl>
       <SelectContent>
-        <SelectItem value="none">None (Root Collection)</SelectItem>
+        <SelectItem value="none">Ninguno (Colección Raíz)</SelectItem>
         {error ? (
           <SelectItem value="error" disabled>
-            Error loading collections
+            Error al cargar las colecciones
           </SelectItem>
         ) : fetching && collections.length === 0 ? (
           <SelectItem value="loading" disabled>
-            Loading collections...
+            Cargando colecciones...
           </SelectItem>
         ) : (
           filteredCollections.map(({ node: parentCollection }) => (
@@ -179,7 +179,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
         if (res.data) {
           router.push("/admin/collections");
           router.refresh();
-          toast({ title: "Success Collection is updated." });
+          toast({ title: "Colección actualizada correctamente." });
         }
       } else {
         const res = await createCollection({
@@ -191,7 +191,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
           router.push("/admin/collections");
           router.refresh();
 
-          toast({ title: "Success Collection is created." });
+          toast({ title: "Colección creada correctamente." });
         }
       }
     } catch {
@@ -212,18 +212,18 @@ function CollectionForm({ collection }: CollectionFormProps) {
             <FormControl>
               <Input
                 aria-invalid={!!form.formState.errors.label}
-                placeholder="Type Collection label."
+                placeholder="Ingrese el label de la colección."
                 {...register("label")}
               />
             </FormControl>
             <FormMessage />
           </FormItem>
           <FormItem>
-            <FormLabel className="text-sm">Title*</FormLabel>
+            <FormLabel className="text-sm">Título*</FormLabel>
             <FormControl>
               <Input
                 aria-invalid={!!form.formState.errors.title}
-                placeholder="Type Collection title."
+                placeholder="Ingrese el título de la colección."
                 {...register("title")}
               />
             </FormControl>
@@ -236,7 +236,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
               <Input
                 defaultValue={collection?.slug}
                 aria-invalid={!!form.formState.errors.slug}
-                placeholder="Type Collection slug."
+                placeholder="Ingrese el slug de la colección."
                 {...register("slug")}
               />
             </FormControl>
@@ -244,12 +244,12 @@ function CollectionForm({ collection }: CollectionFormProps) {
           </FormItem>
 
           <FormItem>
-            <FormLabel className="text-sm">Description*</FormLabel>
+            <FormLabel className="text-sm">Descripción*</FormLabel>
             <FormControl>
               <Textarea
                 defaultValue={collection?.description}
                 aria-invalid={!!form.formState.errors.description}
-                placeholder="Type Collection description."
+                placeholder="Ingrese la descripción de la colección."
                 {...register("description")}
               />
             </FormControl>
@@ -261,7 +261,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
             name="featuredImageId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Featured Image*</FormLabel>
+                <FormLabel>Imagen Destacada*</FormLabel>
                 <Suspense
                   fallback={
                     <div className="h-32 w-full bg-muted animate-pulse rounded-md" />
@@ -277,8 +277,8 @@ function CollectionForm({ collection }: CollectionFormProps) {
                 </Suspense>
 
                 <FormDescription>
-                  Drag n Drop the image to above section or click the button to
-                  select from Image gallery.
+                  Arrastre y suelte la imagen en la sección anterior o haga clic
+                  en el botón para seleccionar desde la galería de imágenes.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -290,7 +290,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
             name="parentId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Parent Collection</FormLabel>
+                <FormLabel>Colección Padre</FormLabel>
                 <ParentCollectionSelect
                   value={field.value}
                   onChange={field.onChange}
@@ -300,8 +300,9 @@ function CollectionForm({ collection }: CollectionFormProps) {
                   error={error}
                 />
                 <FormDescription>
-                  Select a parent collection to create a hierarchical structure.
-                  Leave as &quot;None&quot; for root-level collections.
+                  Seleccione una colección padre para crear una estructura
+                  jerárquica. Deje como &quot;Ninguno&quot; para las colecciones
+                  de nivel raíz.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -333,7 +334,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
 
         <div className="py-8 flex gap-x-5 items-center">
           <Button disabled={isPending} variant={"outline"} form="project-form">
-            {collection ? "Update" : "Create"}
+            {collection ? "Actualizar" : "Crear"}
             {isPending && (
               <Spinner
                 className="mr-2 h-4 w-4 animate-spin"
@@ -342,7 +343,7 @@ function CollectionForm({ collection }: CollectionFormProps) {
             )}
           </Button>
           <Link href="/admin/collections" className={buttonVariants()}>
-            Cancel
+            Cancelar
           </Link>
         </div>
       </form>

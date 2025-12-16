@@ -1,12 +1,16 @@
 import AdminShell from "@/components/admin/AdminShell";
 import { buttonVariants } from "@/components/ui/button";
+import { DataTableSkeleton } from "@/features/cms";
+import {
+  CollectionsColumns,
+  CollectionsDataTable,
+} from "@/features/collections";
 import { gql } from "@/gql";
 import { getClient } from "@/lib/urql";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CollectionsColumns } from "@/features/collections";
-import { DataTable } from "@/features/cms";
+import { Suspense } from "react";
 
 type AdminCollectionsPageProps = {
   searchParams: {
@@ -28,26 +32,28 @@ const AdminCollectionsPageQuery = gql(/* GraphQL */ `
   }
 `);
 
-async function collectionsPage({ searchParams }: AdminCollectionsPageProps) {
+async function collectionsPage({}: AdminCollectionsPageProps) {
   const { data } = await getClient().query(AdminCollectionsPageQuery, {});
 
   if (!data) return notFound();
 
   return (
     <AdminShell
-      heading="Collections"
-      description={"Edit collections from the dashboard. "}
+      heading="Colecciones"
+      description={"Edite las colecciones desde el dashboard. "}
     >
       <section className="flex justify-end items-center pb-5 w-full">
         <Link href="/admin/collections/new" className={cn(buttonVariants())}>
-          New Collection
+          Nueva Colección
         </Link>
       </section>
 
-      <DataTable
-        columns={CollectionsColumns}
-        data={data.collectionsCollection?.edges || []}
-      />
+      <Suspense fallback={<DataTableSkeleton />}>
+        <CollectionsDataTable
+          columns={CollectionsColumns}
+          data={data.collectionsCollection?.edges || []}
+        />
+      </Suspense>
     </AdminShell>
   );
 }

@@ -1,6 +1,6 @@
 import { getMedia } from "@/_actions/medias";
-import { UpdateMediaForm } from "@/features/medias";
 import Modal from "@/components/ui/Modal";
+import { UpdateMediaForm } from "@/features/medias";
 import { keytoUrl } from "@/lib/utils";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -13,7 +13,7 @@ async function EditMediaModals({ params: { mediaId } }: Props) {
   if (!media) return notFound();
 
   return (
-    <Modal header="Modify Image" containerClassName="px-5">
+    <Modal header="Modificar Imagen" containerClassName="px-5">
       <div className="flex flex-col md:flex-row gap-y-5 gap-x-5">
         <div className="flex-1 w-[640px]">
           <Image

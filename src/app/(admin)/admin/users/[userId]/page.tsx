@@ -12,8 +12,8 @@ async function UpdateUserPage({ params: { userId } }: UpdateUserPageProps) {
 
   return (
     <AdminShell
-      heading="Update User"
-      description="Edit user by admin."
+      heading="Actualizar Usuario"
+      description="Edite el usuario por admin."
       showBackButton={true}
     >
       <UpdateUserForm user={user} />
