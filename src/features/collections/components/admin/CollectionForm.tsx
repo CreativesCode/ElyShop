@@ -41,6 +41,7 @@ import {
   CreateCollectionMutation,
   UpdateCollectionMutation,
 } from "../../query";
+import { DeleteCollectionDialog } from "./DeleteCollectionDialog";
 
 const CollectionFromFragment = gql(/* GraphQL */ `
   fragment CollectionFromFragment on collections {
@@ -345,6 +346,14 @@ function CollectionForm({ collection }: CollectionFormProps) {
           <Link href="/admin/collections" className={buttonVariants()}>
             Cancelar
           </Link>
+          {collection && (
+            <div className="ml-auto">
+              <DeleteCollectionDialog
+                collectionId={collection.id}
+                collectionName={collection.label}
+              />
+            </div>
+          )}
         </div>
       </form>
     </Form>

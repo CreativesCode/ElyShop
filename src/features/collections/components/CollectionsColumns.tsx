@@ -1,16 +1,17 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
-import { DocumentType, gql } from "@/gql";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
+  DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { DocumentType, gql } from "@/gql";
 import { ColumnDef } from "@tanstack/react-table";
 import { Home, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { DeleteCollectionDialog } from "./admin/DeleteCollectionDialog";
 
 export const CollectionColumnsFragment = gql(/* GraphQL */ `
   fragment CollectionColumnsFragment on collections {
@@ -114,19 +115,17 @@ const CollectionsColumns: ColumnDef<{
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="flex flex-col items-start"
-          >
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-
-            <Link
-              href={`/admin/collections/${collection.id}`}
-              className={buttonVariants({ variant: "ghost" })}
-            >
-              Editar Colecciones
-            </Link>
-            {/* <DeleteCollectionDialog collectionId={collection.id} /> */}
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/collections/${collection.id}`}>
+                Editar Colección
+              </Link>
+            </DropdownMenuItem>
+            <DeleteCollectionDialog
+              collectionId={collection.id}
+              collectionName={collection.label}
+              variant="dropdown"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );
