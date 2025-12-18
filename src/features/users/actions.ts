@@ -9,7 +9,13 @@ import {
 import { User } from "@supabase/supabase-js";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { profiles } from "../../lib/supabase/schema";
+import {
+  address,
+  carts,
+  orders,
+  profiles,
+  wishlist,
+} from "../../lib/supabase/schema";
 
 export const getCurrentUser = async () => {
   const cookieStore = cookies();
@@ -88,5 +94,49 @@ export const createUser = async ({
     return res;
   } catch (err) {
     throw new Error("Unexpected error occured.");
+  }
+};
+
+export const deleteUserAction = async (userId: string) => {
+  const cookieStore = cookies();
+  const adminAuthClient = createClient({ cookieStore, isAdmin: true }).auth
+    .admin;
+
+  try {
+    // Verificar si el usuario tiene órdenes relacionadas
+    const userOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.user_id, userId))
+      .limit(1);
+
+    if (userOrders.length > 0) {
+      throw new Error(
+        "No se puede eliminar el usuario porque tiene órdenes asociadas. Las órdenes deben mantenerse para el historial de compras.",
+      );
+    }
+
+    // Eliminar carritos del usuario (si existen)
+    await db.delete(carts).where(eq(carts.userId, userId));
+
+    // Eliminar wishlist del usuario (si existe)
+    await db.delete(wishlist).where(eq(wishlist.userId, userId));
+
+    // Eliminar direcciones del usuario (si existen)
+    await db.delete(address).where(eq(address.userProfileId, userId));
+
+    // Eliminar el perfil del usuario si existe
+    await db.delete(profiles).where(eq(profiles.id, userId));
+
+    // Eliminar el usuario de Supabase Auth
+    const { error } = await adminAuthClient.deleteUser(userId);
+
+    if (error) {
+      throw new Error(error.message || "Error al eliminar el usuario.");
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    throw new Error(err?.message || "Error inesperado al eliminar el usuario.");
   }
 };

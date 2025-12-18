@@ -1,9 +1,10 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -14,6 +15,7 @@ import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { DeleteUserDialog } from "./admin/DeleteUserDialog";
 
 const UsersColumns: ColumnDef<User>[] = [
   {
@@ -103,15 +105,17 @@ const UsersColumns: ColumnDef<User>[] = [
           >
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
-            <Link
-              href={`/admin/products/${user.id}`}
-              className={buttonVariants({ variant: "ghost" })}
-            >
-              Editar Usuario
-            </Link>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/users/${user.id}`}>Editar Usuario</Link>
+            </DropdownMenuItem>
             <Button onClick={() => promoteAdminHandler(user.id)}>
               Promover a Admin
             </Button>
+            <DeleteUserDialog
+              userId={user.id}
+              userName={user.user_metadata?.name || user.email || "Usuario"}
+              variant="dropdown"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -19,12 +19,13 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { PasswordInput } from "@/features/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { PasswordInput } from "@/features/auth";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { AdminUserFormData, adminUserShcema } from "../validations";
+import { DeleteUserDialog } from "./admin/DeleteUserDialog";
 
 type AdminUserFormProps = {
   user?: User;
@@ -138,9 +139,17 @@ function UpdateUserForm({ user }: AdminUserFormProps) {
               />
             )}
           </Button>
-          <Link href="/admin/categories" className={buttonVariants()}>
+          <Link href="/admin/users" className={buttonVariants()}>
             Cancel
           </Link>
+          {user && (
+            <div className="ml-auto">
+              <DeleteUserDialog
+                userId={user.id}
+                userName={user.user_metadata?.name || user.email || "Usuario"}
+              />
+            </div>
+          )}
         </div>
       </form>
     </Form>
