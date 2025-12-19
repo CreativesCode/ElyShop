@@ -29,6 +29,7 @@ export const OrdersListFragment = gql(/* GraphQL */ `
     node {
       id
       amount
+      shipping_cost
       order_status
       created_at
       item: order_linesCollection {
@@ -36,6 +37,7 @@ export const OrdersListFragment = gql(/* GraphQL */ `
           node {
             id
             quantity
+            price
             products {
               id
               featured
@@ -97,6 +99,12 @@ function OrdersList({ orders, pageInfo }: OrdersListProps) {
             order.order_status as OrderStatus,
           );
           const StatusIcon = statusInfo?.icon;
+          const shippingCost =
+            order.shipping_cost === null || order.shipping_cost === undefined
+              ? null
+              : Number(order.shipping_cost);
+          const total = Number(order.amount || 0);
+          const subtotal = shippingCost === null ? total : total - shippingCost;
 
           return (
             <Card key={order.id} className="w-full overflow-hidden">
@@ -188,6 +196,20 @@ function OrdersList({ orders, pageInfo }: OrdersListProps) {
                                   {node.quantity}
                                 </span>
                               </p>
+                              <p>
+                                Precio:{" "}
+                                <span className="font-medium text-foreground">
+                                  {formatPrice(node.price)}
+                                </span>
+                              </p>
+                              <p>
+                                Total:{" "}
+                                <span className="font-medium text-foreground">
+                                  {formatPrice(
+                                    Number(node.price) * node.quantity,
+                                  )}
+                                </span>
+                              </p>
                               {reservation && (
                                 <>
                                   {reservation.color && (
@@ -227,6 +249,28 @@ function OrdersList({ orders, pageInfo }: OrdersListProps) {
                   </div>
 
                   <section className="md:col-span-4 flex flex-col gap-3 max-w-full min-w-0">
+                    <div className="rounded-md border p-3 text-sm space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="font-medium">
+                          {formatPrice(subtotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Envío</span>
+                        <span className="font-medium">
+                          {shippingCost === null
+                            ? "Por definir"
+                            : formatPrice(shippingCost)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-t pt-2">
+                        <span className="font-semibold">Total</span>
+                        <span className="font-semibold">
+                          {formatPrice(total)}
+                        </span>
+                      </div>
+                    </div>
                     <Link
                       href={`/orders/${order.id}`}
                       className={cn(buttonVariants(), "w-full max-w-full")}

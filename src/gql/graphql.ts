@@ -2407,6 +2407,7 @@ export type OrderPageQueryQuery = {
         __typename?: "orders";
         id: string;
         amount: any;
+        shipping_cost?: any | null;
         order_status?: string | null;
         created_at: any;
         item?: {
@@ -2417,6 +2418,7 @@ export type OrderPageQueryQuery = {
               __typename?: "order_lines";
               id: string;
               quantity: number;
+              price: any;
               products?: {
                 __typename?: "products";
                 id: string;
@@ -3172,6 +3174,7 @@ export type OrdersListFragmentFragment = {
     __typename?: "orders";
     id: string;
     amount: any;
+    shipping_cost?: any | null;
     order_status?: string | null;
     created_at: any;
     item?: {
@@ -3182,6 +3185,7 @@ export type OrdersListFragmentFragment = {
           __typename?: "order_lines";
           id: string;
           quantity: number;
+          price: any;
           products?: {
             __typename?: "products";
             id: string;
@@ -3989,6 +3993,10 @@ export const OrdersListFragmentFragmentDoc = {
                 { kind: "Field", name: { kind: "Name", value: "amount" } },
                 {
                   kind: "Field",
+                  name: { kind: "Name", value: "shipping_cost" },
+                },
+                {
+                  kind: "Field",
                   name: { kind: "Name", value: "order_status" },
                 },
                 { kind: "Field", name: { kind: "Name", value: "created_at" } },
@@ -4018,6 +4026,10 @@ export const OrdersListFragmentFragmentDoc = {
                                   {
                                     kind: "Field",
                                     name: { kind: "Name", value: "quantity" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "price" },
                                   },
                                   {
                                     kind: "Field",
@@ -5792,6 +5804,10 @@ export const OrderPageQueryDocument = {
                 { kind: "Field", name: { kind: "Name", value: "amount" } },
                 {
                   kind: "Field",
+                  name: { kind: "Name", value: "shipping_cost" },
+                },
+                {
+                  kind: "Field",
                   name: { kind: "Name", value: "order_status" },
                 },
                 { kind: "Field", name: { kind: "Name", value: "created_at" } },
@@ -5821,6 +5837,10 @@ export const OrderPageQueryDocument = {
                                   {
                                     kind: "Field",
                                     name: { kind: "Name", value: "quantity" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "price" },
                                   },
                                   {
                                     kind: "Field",

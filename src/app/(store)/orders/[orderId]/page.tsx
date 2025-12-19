@@ -97,6 +97,13 @@ async function TrackOrderPage({ params: { orderId } }: TrackOrderProps) {
   const statusInfo = getOrderStatusInfo(orderStatus);
   const StatusIcon = statusInfo?.icon;
   const paymentInfo = getPaymentStatusInfo(order.payment_status);
+  const shippingCost =
+    order.shipping_cost === null || order.shipping_cost === undefined
+      ? null
+      : Number(order.shipping_cost);
+  const amountNumber = Number(order.amount || 0);
+  const subtotal =
+    shippingCost === null ? amountNumber : amountNumber - shippingCost;
 
   return (
     <Shell className="max-w-screen-2xl mx-auto">
@@ -272,21 +279,19 @@ async function TrackOrderPage({ params: { orderId } }: TrackOrderProps) {
             <CardContent className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal:</span>
-                <span>{formatPrice(order.amount)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
-              {order.shipping_cost && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Envío:</span>
-                  <span>{formatPrice(order.shipping_cost)}</span>
-                </div>
-              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Envío:</span>
+                <span>
+                  {shippingCost === null
+                    ? "Por definir"
+                    : formatPrice(shippingCost)}
+                </span>
+              </div>
               <div className="flex justify-between font-semibold pt-2 border-t">
                 <span>Total:</span>
-                <span>
-                  {formatPrice(
-                    Number(order.amount) + Number(order.shipping_cost || 0),
-                  )}
-                </span>
+                <span>{formatPrice(amountNumber)}</span>
               </div>
             </CardContent>
           </Card>

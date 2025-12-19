@@ -14,7 +14,7 @@ const updateShippingZoneSchema = z.object({
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { zoneId: string } }
+  { params }: { params: { zoneId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -41,7 +41,7 @@ export async function PATCH(
     if (parsed.success === false) {
       return NextResponse.json(
         { error: "Datos inválidos", details: parsed.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,14 +67,14 @@ export async function PATCH(
     console.error("Error updating shipping zone:", error);
     return NextResponse.json(
       { error: "Error actualizando zona de envío" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { zoneId: string } }
+  { params }: { params: { zoneId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -110,7 +110,7 @@ export async function DELETE(
     console.error("Error deleting shipping zone:", error);
     return NextResponse.json(
       { error: "Error eliminando zona de envío" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

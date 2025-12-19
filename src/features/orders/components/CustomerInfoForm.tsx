@@ -107,7 +107,7 @@ export function CustomerInfoForm({
     }
 
     const matched = shippingZones.find(
-      (z) => z.name.trim().toLowerCase() === currentZone.toLowerCase()
+      (z) => z.name.trim().toLowerCase() === currentZone.toLowerCase(),
     );
 
     if (matched) {

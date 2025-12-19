@@ -108,6 +108,8 @@ export default async function DashboardPage({
   const [
     revenueCurrentRow,
     revenuePrevRow,
+    shippingRevenueCurrentRow,
+    shippingRevenuePrevRow,
     salesCurrentRow,
     salesPrevRow,
     productsTotalRow,
@@ -134,6 +136,30 @@ export default async function DashboardPage({
     db
       .select({
         total: sql<number>`COALESCE(SUM(${orders.amount}), 0)`,
+      })
+      .from(orders)
+      .where(
+        and(
+          eq(orders.payment_status, "paid"),
+          gte(orders.createdAt, prevFrom),
+          lt(orders.createdAt, prevToExclusive),
+        ),
+      ),
+    db
+      .select({
+        total: sql<number>`COALESCE(SUM(COALESCE(${orders.shipping_cost}, '0')::numeric), 0)`,
+      })
+      .from(orders)
+      .where(
+        and(
+          eq(orders.payment_status, "paid"),
+          gte(orders.createdAt, safeFrom),
+          lt(orders.createdAt, safeToExclusive),
+        ),
+      ),
+    db
+      .select({
+        total: sql<number>`COALESCE(SUM(COALESCE(${orders.shipping_cost}, '0')::numeric), 0)`,
       })
       .from(orders)
       .where(
@@ -293,6 +319,10 @@ export default async function DashboardPage({
 
   const revenueCurrent = toNumber(revenueCurrentRow?.[0]?.total);
   const revenuePrev = toNumber(revenuePrevRow?.[0]?.total);
+  const shippingRevenueCurrent = toNumber(
+    shippingRevenueCurrentRow?.[0]?.total,
+  );
+  const shippingRevenuePrev = toNumber(shippingRevenuePrevRow?.[0]?.total);
   const salesCurrent = toNumber(salesCurrentRow?.[0]?.total);
   const salesPrev = toNumber(salesPrevRow?.[0]?.total);
   const productsTotal = toNumber(productsTotalRow?.[0]?.total);
@@ -302,6 +332,10 @@ export default async function DashboardPage({
   const usersTotal = toNumber(usersTotalRow?.[0]?.total);
 
   const revenueDelta = percentChange(revenueCurrent, revenuePrev);
+  const shippingRevenueDelta = percentChange(
+    shippingRevenueCurrent,
+    shippingRevenuePrev,
+  );
   const salesDelta = percentChange(salesCurrent, salesPrev);
 
   const totalsByBucket = new Map<string, number>();
@@ -376,7 +410,7 @@ export default async function DashboardPage({
             </div>
           </div>
           <div className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
@@ -401,6 +435,36 @@ export default async function DashboardPage({
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {formatPercent(revenueDelta)} vs período anterior
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Ingresos por envíos (pagados) - mes
+                  </CardTitle>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="h-4 w-4 text-muted-foreground"
+                  >
+                    <path d="M3 7h13v10H3z" />
+                    <path d="M16 10h4l1 2v5h-5z" />
+                    <path d="M7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+                    <path d="M18 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {moneyUSD(shippingRevenueCurrent)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formatPercent(shippingRevenueDelta)} vs período anterior
                   </p>
                 </CardContent>
               </Card>

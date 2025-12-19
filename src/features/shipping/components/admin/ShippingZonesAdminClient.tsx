@@ -119,7 +119,7 @@ export default function ShippingZonesAdminClient({ initialZones }: Props) {
 
   const deleteZone = async (zoneId: string) => {
     const ok = window.confirm(
-      "¿Eliminar esta zona? Esto no afecta órdenes ya creadas, pero dejará de aparecer en el checkout."
+      "¿Eliminar esta zona? Esto no afecta órdenes ya creadas, pero dejará de aparecer en el checkout.",
     );
     if (!ok) return;
 
@@ -209,7 +209,9 @@ export default function ShippingZonesAdminClient({ initialZones }: Props) {
                     onChange={(e) => {
                       const v = e.target.value;
                       setZones((prev) =>
-                        prev.map((x) => (x.id === z.id ? { ...x, name: v } : x))
+                        prev.map((x) =>
+                          x.id === z.id ? { ...x, name: v } : x,
+                        ),
                       );
                     }}
                     disabled={isSubmitting}
@@ -226,8 +228,8 @@ export default function ShippingZonesAdminClient({ initialZones }: Props) {
                         const v = e.target.value;
                         setZones((prev) =>
                           prev.map((x) =>
-                            x.id === z.id ? { ...x, cost: v } : x
-                          )
+                            x.id === z.id ? { ...x, cost: v } : x,
+                          ),
                         );
                       }}
                       disabled={isSubmitting}
@@ -243,8 +245,8 @@ export default function ShippingZonesAdminClient({ initialZones }: Props) {
                     onCheckedChange={(v) => {
                       setZones((prev) =>
                         prev.map((x) =>
-                          x.id === z.id ? { ...x, isActive: Boolean(v) } : x
-                        )
+                          x.id === z.id ? { ...x, isActive: Boolean(v) } : x,
+                        ),
                       );
                     }}
                     disabled={isSubmitting}

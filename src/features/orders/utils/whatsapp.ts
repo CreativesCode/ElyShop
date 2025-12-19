@@ -79,7 +79,7 @@ export function generateWhatsAppMessage(data: WhatsAppMessageData): string {
  */
 export function generateWhatsAppUrl(
   message: string,
-  phoneNumber?: string
+  phoneNumber?: string,
 ): string {
   const phone = (phoneNumber || siteConfig.whatsappPhone).replace(/\D/g, "");
   const encodedMessage = encodeURIComponent(message);

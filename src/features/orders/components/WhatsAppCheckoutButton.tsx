@@ -56,14 +56,14 @@ export function WhatsAppCheckoutButton({
   const [loadingShippingZones, setLoadingShippingZones] = useState(false);
   const [addresses, setAddresses] = useState<SelectAddress[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<SelectAddress | null>(
-    null
+    null,
   );
   const [shippingZones, setShippingZones] = useState<ShippingZone[]>([]);
   const [addressMode, setAddressMode] = useState<"existing" | "new">(
-    "existing"
+    "existing",
   );
   const [guestAddress, setGuestAddress] = useState<CustomerInfoInput | null>(
-    null
+    null,
   );
   const { toast } = useToast();
   const router = useRouter();
@@ -102,7 +102,7 @@ export function WhatsAppCheckoutButton({
 
   const resolveShippingCost = useMemo(() => {
     const byName = new Map(
-      shippingZones.map((z) => [normalize(z.name), z] as const)
+      shippingZones.map((z) => [normalize(z.name), z] as const),
     );
 
     return (zoneName: string): number | undefined => {
@@ -141,7 +141,7 @@ export function WhatsAppCheckoutButton({
         setAddressMode(loadedAddresses.length > 0 ? "existing" : "new");
         // Auto-seleccionar la dirección predeterminada
         const defaultAddress = loadedAddresses.find(
-          (a: SelectAddress) => a.isDefault
+          (a: SelectAddress) => a.isDefault,
         );
         if (defaultAddress) {
           setSelectedAddress(defaultAddress);
@@ -248,7 +248,7 @@ export function WhatsAppCheckoutButton({
 
   const handleSubmit = async (
     customerData: CustomerInfoInput,
-    shippingCost?: number
+    shippingCost?: number,
   ) => {
     setIsLoading(true);
 
@@ -296,7 +296,7 @@ export function WhatsAppCheckoutButton({
 
       // Redirigir a la página de confirmación
       router.push(
-        `/orders/confirmation?orderId=${data.orderId}&orderNumber=${data.orderNumber}`
+        `/orders/confirmation?orderId=${data.orderId}&orderNumber=${data.orderNumber}`,
       );
 
       // Abrir WhatsApp después de un pequeño delay

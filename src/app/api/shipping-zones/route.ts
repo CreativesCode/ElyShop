@@ -20,7 +20,7 @@ export async function GET() {
     console.error("Error loading shipping zones:", error);
     return NextResponse.json(
       { error: "Error cargando zonas de envío" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

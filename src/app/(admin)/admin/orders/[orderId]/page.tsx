@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { DeleteOrderDialog } from "@/features/orders/components/admin/DeleteOrderDialog";
 import OrderStatusChanger from "@/features/orders/components/admin/OrderStatusChanger";
+import ShippingCostEditor from "@/features/orders/components/admin/ShippingCostEditor";
 import { getOrderStatusInfo } from "@/features/orders/utils/orderStatus";
 import { formatOrderNumber } from "@/features/orders/utils/whatsapp";
 import db from "@/lib/supabase/db";
@@ -95,6 +96,13 @@ export default async function AdminOrderDetailPage({
     borderColor: "border-gray-300",
   };
   const StatusIcon = statusInfo.icon;
+  const subtotal = items.reduce((acc, item) => {
+    return acc + Number(item.price || 0) * Number(item.quantity || 0);
+  }, 0);
+  const shippingCost =
+    order.shipping_cost === null || order.shipping_cost === undefined
+      ? null
+      : Number(order.shipping_cost);
 
   return (
     <AdminShell
@@ -254,23 +262,27 @@ export default async function AdminOrderDetailPage({
               <Separator className="my-4" />
 
               <div className="space-y-2">
-                {order.shipping_cost && (
-                  <>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>
-                        {formatPrice(
-                          Number(order.amount) - Number(order.shipping_cost),
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Envío</span>
-                      <span>{formatPrice(Number(order.shipping_cost))}</span>
-                    </div>
-                    <Separator />
-                  </>
-                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>{formatPrice(subtotal)}</span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Envío</span>
+                  <span>
+                    {shippingCost === null
+                      ? "Por definir"
+                      : formatPrice(shippingCost)}
+                  </span>
+                </div>
+                <div className="pt-2">
+                  <ShippingCostEditor
+                    orderId={order.id}
+                    currentShippingCost={shippingCost}
+                  />
+                </div>
+
+                <Separator />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
                   <span>{formatPrice(Number(order.amount))}</span>

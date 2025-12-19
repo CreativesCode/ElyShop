@@ -43,7 +43,7 @@ export async function GET() {
     console.error("Error loading admin shipping zones:", error);
     return NextResponse.json(
       { error: "Error cargando zonas de envío" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     if (parsed.success === false) {
       return NextResponse.json(
         { error: "Datos inválidos", details: parsed.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     console.error("Error creating shipping zone:", error);
     return NextResponse.json(
       { error: "Error creando zona de envío" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
