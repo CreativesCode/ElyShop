@@ -109,18 +109,18 @@ export default async function Home({
   if (code) {
     redirect(
       `/auth/callback?code=${encodeURIComponent(code)}&next=${encodeURIComponent(
-        targetNext,
-      )}`,
+        targetNext
+      )}`
     );
   }
 
   if (token_hash && type) {
     redirect(
       `/auth/callback?token_hash=${encodeURIComponent(
-        token_hash,
+        token_hash
       )}&type=${encodeURIComponent(type)}&next=${encodeURIComponent(
-        targetNext,
-      )}`,
+        targetNext
+      )}`
     );
   }
 
@@ -133,7 +133,7 @@ export default async function Home({
   if (data === null) return notFound();
 
   const sliderInStock = (data.sliderProducts?.edges ?? []).filter(
-    ({ node }) => (node.stock ?? 0) > 0,
+    ({ node }) => (node.stock ?? 0) > 0
   );
 
   return (
@@ -198,7 +198,7 @@ function HeroSection() {
       <div className="relative w-full h-[400px] md:h-[800px]">
         <Image
           alt="Furniture"
-          src="https://bhwyagfoyylgrdgyngrm.supabase.co/storage/v1/object/public/klaushop/public/bg-hero.png"
+          src="https://bulyqqpkrmjowraarppz.supabase.co/storage/v1/object/public/elyshop/public/bg-hero.jpg"
           priority={true}
           width={1920}
           height={800}
@@ -228,7 +228,7 @@ function HeroSection() {
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "border-2 border-white text-white rounded px-8 py-3 ",
                 "md:px-16 md:py-6",
-                "hover:text-zinc-600 hover:bg-white",
+                "hover:text-zinc-600 hover:bg-white"
               )}
             >
               Nuevos productos
@@ -273,7 +273,7 @@ function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
             className={cn(
               "relative bg-secondary rounded-full flex justify-center items-center overflow-hidden shadow-md",
               "w-[180px] h-[180px]",
-              "md:w-[240px] md:h-[240px]",
+              "md:w-[240px] md:h-[240px]"
               // "md:w-[320px] md:h-[320px]"
               // "lg:w-[360px] lg:h-[360px]"
             )}
@@ -286,7 +286,7 @@ function ProductSubCollectionsCircles({ collections }: CollectionsCardsProps) {
               className={cn(
                 "object-center object-cover hover:scale-105 transition-all duration-500 rounded-full",
                 "w-[180px] h-[180px]",
-                "md:w-[240px] md:h-[240px]",
+                "md:w-[240px] md:h-[240px]"
                 // "md:w-[280px] md:h-[280px]",
                 // "lg:w-[320px] lg:h-[320px]"
               )}
@@ -405,7 +405,7 @@ function BannerCollectionCard({
       <div
         className={cn(
           "relative w-full h-[340px] md:h-[580px] col-span-12 md:col-span-8 overflow-hidden",
-          imageLeft ? "md:order-1" : "md:order-2",
+          imageLeft ? "md:order-1" : "md:order-2"
         )}
       >
         <Image
@@ -419,7 +419,7 @@ function BannerCollectionCard({
       <div
         className={cn(
           "col-span-12 md:col-span-4 pb-6 md:py-20 px-6 md:px-16",
-          imageLeft ? "md:order-2" : "md:order-1",
+          imageLeft ? "md:order-2" : "md:order-1"
         )}
       >
         <h2 className="text-xl md:text-3xl font-semibold mb-3">{title}</h2>

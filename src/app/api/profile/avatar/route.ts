@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Debes estar autenticado" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { error: "Bad Request", message: "No se proporcionó ningún archivo" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
           error: "Bad Request",
           message: "El archivo debe ser una imagen (png/jpg/webp)",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -51,14 +51,14 @@ export async function POST(request: NextRequest) {
           error: "Bad Request",
           message: "La imagen es muy grande. Máximo 2MB",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     // Crear cliente con service role para bypassar RLS
     const supabaseAdmin = createClient({ cookieStore, isAdmin: true });
 
-    const bucket = "klaushop";
+    const bucket = process.env.NEXT_PUBLIC_S3_BUCKET || "";
     const ext = file.name.split(".").pop()?.toLowerCase() || "png";
     const filePath = `public/avatars/${user.id}.${ext}`;
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           error: "Upload Failed",
           message: uploadError.message,
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           error: "Update Failed",
           message: updateError.message,
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         success: true,
         avatarUrl: bustCacheUrl,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         error: "Internal Server Error",
         message,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

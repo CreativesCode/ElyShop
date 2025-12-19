@@ -2,15 +2,16 @@ import type { NavItemWithOptionalChildren } from "@/types";
 import type { Metadata } from "next";
 
 export const siteConfig = {
-  name: "Klau's Shop",
+  name: "Ely's Shop",
   description: "Tu tienda favorita de ropa y accesorios.",
   url: "https://hiyori.hugo-coding.com",
   address: "1600 Amphitheatre Parkway in Mountain View, California",
   phone: "+1(234)-567-8901",
   email: "hello@hugo-coding.com",
-  zones: "Santa Clara, Placetas, Encrucijada y Calabazar de Sagua",
-  whatsappPhone: "+5352564206", // Número de WhatsApp para pedidos
-  orderPrefix: "KS", // Prefijo para números de orden (ej: KS-1042)
+  zones:
+    "Guanabo, La Habana, Boca de Jaruco, San José de las Lajas y San Cristóbal",
+  whatsappPhone: "+5355099983", // Número de WhatsApp para pedidos
+  orderPrefix: "ES", // Prefijo para números de orden (ej: ES-1042)
   mainNav: [
     {
       title: "Shop",
@@ -60,7 +61,7 @@ export function getPageTitle(pageTitle?: string): string {
  */
 export function getPageMetadata(
   title?: string,
-  description?: string,
+  description?: string
 ): Metadata {
   return {
     title: getPageTitle(title),
