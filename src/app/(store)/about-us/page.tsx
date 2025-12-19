@@ -127,7 +127,7 @@ export default function AboutUsPage() {
                     href="/shop"
                     className={cn(
                       buttonVariants({ variant: "default", size: "lg" }),
-                      "bg-primary-600 text-white shadow-sm hover:bg-primary-700",
+                      "bg-primary-600 text-white shadow-sm hover:bg-primary-700"
                     )}
                   >
                     <ShoppingBag className="mr-2 h-5 w-5" />
@@ -137,7 +137,7 @@ export default function AboutUsPage() {
                     href="/special-orders"
                     className={cn(
                       buttonVariants({ variant: "outline", size: "lg" }),
-                      "border-primary-200 bg-white/60 text-primary-800 shadow-sm hover:bg-accent-50 hover:text-primary-950",
+                      "border-primary-200 bg-white/60 text-primary-800 shadow-sm hover:bg-accent-50 hover:text-primary-950"
                     )}
                   >
                     Servicio de Encargos
@@ -294,7 +294,7 @@ export default function AboutUsPage() {
               href="/shop"
               className={cn(
                 buttonVariants({ variant: "default", size: "lg" }),
-                "bg-primary-600 hover:bg-primary-700 text-white shadow-sm",
+                "bg-primary-600 hover:bg-primary-700 text-white shadow-sm"
               )}
             >
               <ShoppingBag className="mr-2 h-5 w-5" />
@@ -304,7 +304,7 @@ export default function AboutUsPage() {
               href="/special-orders"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "border-primary-200 bg-white/60 text-primary-800 shadow-sm hover:bg-accent-50 hover:text-primary-950",
+                "border-primary-200 bg-white/60 text-primary-800 shadow-sm hover:bg-accent-50 hover:text-primary-950"
               )}
             >
               Servicio de Encargos
@@ -327,7 +327,7 @@ export default function AboutUsPage() {
             rel="noopener noreferrer"
             className={cn(
               buttonVariants({ variant: "default", size: "lg" }),
-              "bg-green-600 hover:bg-green-700 text-white",
+              "bg-green-600 hover:bg-green-700 text-white"
             )}
           >
             <Image
