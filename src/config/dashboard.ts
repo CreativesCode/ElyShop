@@ -42,5 +42,11 @@ export const dashboardConfig: DashboardConfig = {
       icon: "receipt",
       items: [],
     },
+    {
+      title: "Envíos",
+      href: "/admin/shipping-zones",
+      icon: "truck",
+      items: [],
+    },
   ],
 };

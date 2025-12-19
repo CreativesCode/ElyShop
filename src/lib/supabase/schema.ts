@@ -66,7 +66,7 @@ export const carts = pgTable(
         .onDelete("cascade")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export const cartsRelations = relations(carts, ({ one }) => ({
@@ -104,7 +104,7 @@ export const wishlist = pgTable(
         .onDelete("cascade")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export type SelectWishlist = InferSelectModel<typeof wishlist>;
@@ -149,7 +149,7 @@ export const comments = pgTable(
         .onDelete("cascade")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export const products = pgTable(
@@ -205,7 +205,7 @@ export const products = pgTable(
         name: "collection",
       }),
     };
-  },
+  }
 );
 
 export const productsRelations = relations(products, ({ one }) => ({
@@ -283,7 +283,7 @@ export const orders = pgTable(
         name: "orders_profiles_fk",
       }),
     };
-  },
+  }
 );
 
 export type SelectOrders = InferSelectModel<typeof orders>;
@@ -333,7 +333,7 @@ export const orderLines = pgTable(
         .onDelete("restrict")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export type SelectOrderLines = InferSelectModel<typeof orderLines>;
@@ -406,7 +406,7 @@ export const inventoryReservations = pgTable(
         .onDelete("restrict")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export type SelectInventoryReservation = InferSelectModel<
@@ -427,7 +427,7 @@ export const inventoryReservationsRelations = relations(
       fields: [inventoryReservations.productId],
       references: [products.id],
     }),
-  }),
+  })
 );
 
 export const address = pgTable("address", {
@@ -479,6 +479,34 @@ export const addressRelations = relations(address, ({ one }) => ({
 export type SelectAddress = InferSelectModel<typeof address>;
 export type InsertAddress = InferInsertModel<typeof address>;
 
+// Zonas de envío (configurable desde admin)
+// - `name` es el nombre de la zona que el cliente elige (ej: "Santa Clara")
+// - `cost` se aplica como shipping_cost en orders cuando la zona está registrada
+export const shippingZones = pgTable("shipping_zones", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  name: text("name").notNull(),
+  cost: decimal("cost", { precision: 8, scale: 2 }).notNull().default("0.00"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+    mode: "string",
+  })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", {
+    withTimezone: true,
+    mode: "string",
+  })
+    .defaultNow()
+    .notNull(),
+});
+
+export type SelectShippingZone = InferSelectModel<typeof shippingZones>;
+export type InsertShippingZone = InferInsertModel<typeof shippingZones>;
+
 export const productMedias = pgTable(
   "product_medias",
   {
@@ -511,7 +539,7 @@ export const productMedias = pgTable(
         .onDelete("cascade")
         .onUpdate("cascade"),
     };
-  },
+  }
 );
 
 export type BadgeType = "best_sale" | "featured" | "new_product";
@@ -552,7 +580,7 @@ export const collections = pgTable(
         name: "parent_collection",
       }),
     };
-  },
+  }
 );
 
 export type SelectCollection = InferSelectModel<typeof collections>;

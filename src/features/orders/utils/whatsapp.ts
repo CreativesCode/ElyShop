@@ -42,8 +42,11 @@ export function generateWhatsAppMessage(data: WhatsAppMessageData): string {
   // Subtotal
   message += `\n*Subtotal:* ${subtotal.toFixed(2)} CUP`;
 
-  // Shipping (si está definido)
-  if (shippingCost !== undefined && shippingCost > 0) {
+  // Shipping
+  if (shippingCost === undefined) {
+    message += `\n*Envío:* Por definir (zona no registrada)`;
+    message += `\n*Total:* ${subtotal.toFixed(2)} CUP (sin envío)`;
+  } else {
     message += `\n*Envío:* ${shippingCost.toFixed(2)} CUP`;
     message += `\n*Total:* ${(subtotal + shippingCost).toFixed(2)} CUP`;
   }
@@ -76,7 +79,7 @@ export function generateWhatsAppMessage(data: WhatsAppMessageData): string {
  */
 export function generateWhatsAppUrl(
   message: string,
-  phoneNumber?: string,
+  phoneNumber?: string
 ): string {
   const phone = (phoneNumber || siteConfig.whatsappPhone).replace(/\D/g, "");
   const encodedMessage = encodeURIComponent(message);
