@@ -16,7 +16,7 @@ import Link from "next/link";
 
 export const metadata = getPageMetadata(
   "Sobre Nosotros",
-  `Conoce la historia de ${siteConfig.name}, nuestra misión y valores. Tu tienda de confianza para moda y accesorios.`
+  `Conoce la historia de ${siteConfig.name}, nuestra misión y valores. Tu tienda de confianza para moda y accesorios.`,
 );
 
 const values = [
